@@ -18,6 +18,7 @@ interface PlantData {
     node: cc.Node
     plantItem: plantItem
     positionIndex: number //当前在plantMapPosArr中的位置索引
+    targetMapPlantIndex?: number //指定的合成目标（地图植物的位置索引），-1表示无指定目标
 }
 
 
@@ -85,9 +86,10 @@ export default class GameUI extends cc.Component {
         // 初始化底部植物盒子中的植物
         this.initBottomPlantBox()
         //创建地图上一开始有的植物
-        this.createPlant(plantType.cao, 2, 0)
-        this.createPlant(plantType.cao, 2, 1)
-        this.createPlant(plantType.dangong, 1, 2)
+        // targetMapPlantIndex: 指定要合成的地图植物位置索引，-1表示无指定目标
+        this.createPlant(plantType.cao, 2, 0, -1)
+        this.createPlant(plantType.cao, 2, 1, 0)
+        this.createPlant(plantType.dangong, 1, 2, -1)
         // 清空之前的怪物
         this.monsters.forEach(monster => {
             if(monster.node && monster.node.isValid){
@@ -144,21 +146,22 @@ export default class GameUI extends cc.Component {
         }
         
         // 创建3只植物：level=1的dangong, level=2的dangong, level=4的cao
+        // targetMapPlantIndex: 指定要合成的地图植物位置索引，-1表示无指定目标
         const plantConfigs = [
-            { type: plantType.dangong, level: 1, x: -218, y: 30 },
-            { type: plantType.dangong, level: 2, x: -88, y: 30 },
-            { type: plantType.cao, level: 4, x: 45, y: 30 }
+            { type: plantType.dangong, level: 1, x: -218, y: 30, targetMapPlantIndex: 2 },
+            { type: plantType.dangong, level: 2, x: -88, y: 30, targetMapPlantIndex: 2 }, // 指定与地图位置2的植物合成
+            { type: plantType.cao, level: 4, x: 45, y: 30, targetMapPlantIndex: 0 }
         ]
         
         plantConfigs.forEach(config => {
-            this.createPlantInBox(config.type, config.level, config.x, config.y)
+            this.createPlantInBox(config.type, config.level, config.x, config.y, config.targetMapPlantIndex)
         })
     }
     
     /**
      * 在底部植物盒子中创建植物
      */
-    private createPlantInBox(type: number, level: number, x: number,y:number): PlantData | null {
+    private createPlantInBox(type: number, level: number, x: number, y: number, targetMapPlantIndex: number = -1): PlantData | null {
         if(!this.plantPre) {
             console.error('植物预制体未设置')
             return null
@@ -186,12 +189,13 @@ export default class GameUI extends cc.Component {
         const plantData: PlantData = {
             node: plantNode,
             plantItem: plantItemComponent,
-            positionIndex: -1 // 底部盒子的植物positionIndex为-1
+            positionIndex: -1, // 底部盒子的植物positionIndex为-1
+            targetMapPlantIndex: targetMapPlantIndex // 指定的合成目标
         }
         
         this.plants.push(plantData)
         
-        // 添加拖拽事件（支持拖到地图）
+        // 添加拖拽事件（支持拖到地图或合成）
         this.setupPlantDragFromBox(plantData)
         
         return plantData
@@ -407,7 +411,7 @@ export default class GameUI extends cc.Component {
     /**
      * 创建植物
      */
-    public createPlant(type: number, level: number, positionIndex: number): PlantData | null {
+    public createPlant(type: number, level: number, positionIndex: number, targetMapPlantIndex: number = -1): PlantData | null {
         if(!this.plantPre) {
             console.error('植物预制体未设置')
             return null
@@ -440,7 +444,8 @@ export default class GameUI extends cc.Component {
         const plantData: PlantData = {
             node: plantNode,
             plantItem: plantItemComponent,
-            positionIndex: positionIndex
+            positionIndex: positionIndex,
+            targetMapPlantIndex: targetMapPlantIndex // 指定的合成目标
         }
         
         this.plants.push(plantData)
@@ -455,6 +460,110 @@ export default class GameUI extends cc.Component {
      * 设置底部盒子植物的拖拽事件（可以拖到地图或合成）
      */
     private setupPlantDragFromBox(plantData: PlantData) {
+        let startPos: cc.Vec3 = null
+        
+        plantData.node.on(cc.Node.EventType.TOUCH_START, (event: cc.Event.EventTouch) => {
+            this.dragStartPlant = plantData
+            startPos = plantData.node.position.clone()
+            event.stopPropagation()
+        }, plantData.node)
+        
+        plantData.node.on(cc.Node.EventType.TOUCH_MOVE, (event: cc.Event.EventTouch) => {
+            if(!this.dragStartPlant || this.dragStartPlant !== plantData) return
+            // 跟随手指移动（使用本地坐标）
+            const delta = event.getDelta()
+            const currentPos = plantData.node.position
+            plantData.node.setPosition(
+                currentPos.x + delta.x,
+                currentPos.y + delta.y,
+                currentPos.z
+            )
+        }, plantData.node)
+        
+        plantData.node.on(cc.Node.EventType.TOUCH_END, (event: cc.Event.EventTouch) => {
+            if(!this.dragStartPlant || this.dragStartPlant !== plantData) {
+                startPos = null
+                return
+            }
+            
+            // 检查是否有指定的合成目标（点击自动合成）
+            if(plantData.targetMapPlantIndex !== undefined && plantData.targetMapPlantIndex >= 0) {
+                const targetPlant = this.plants.find(p => p.positionIndex === plantData.targetMapPlantIndex)
+                if(targetPlant && plantData.plantItem.canMergeWith(targetPlant.plantItem)) {
+                    // 直接与指定的地图植物合成
+                    this.mergePlants(plantData, targetPlant, targetPlant)
+                    this.dragStartPlant = null
+                    startPos = null
+                    event.stopPropagation()
+                    return
+                }
+            }
+            
+            // 获取触摸结束时的世界位置
+            const endWorldPos = plantData.node.position
+            
+            // 检查是否拖到其他植物位置（合成）
+            let targetPlant: PlantData = null
+            let minDistance = Infinity
+            
+            this.plants.forEach(plant => {
+                if(plant === plantData) return // 跳过自己
+                
+                // 计算世界位置距离
+                const plantWorldPos = plant.node.position
+                const distance = endWorldPos.sub(plantWorldPos).mag()
+                
+                // 底部植物可以拖到地图植物或其他底部植物
+                // 地图植物只能拖到其他地图植物
+                if(plantData.positionIndex === -1) {
+                    // 底部植物：可以拖到地图植物或其他底部植物
+                    if(distance < 100 && distance < minDistance) { // 100像素范围内
+                        minDistance = distance
+                        targetPlant = plant
+                    }
+                } else {
+                    // 地图植物：只能拖到其他地图植物
+                    if(plant.positionIndex >= 0 && distance < 100 && distance < minDistance) {
+                        minDistance = distance
+                        targetPlant = plant
+                    }
+                }
+            })
+            
+            if(targetPlant && plantData.plantItem.canMergeWith(targetPlant.plantItem)) {
+                // 可以合成（plantData拖动到targetPlant，保留targetPlant的位置）
+                this.mergePlants(plantData, targetPlant, targetPlant)
+            } else {
+                // 检查是否拖到地图上的空位置（只有底部植物可以放置到地图）
+                if(plantData.positionIndex === -1) {
+                    const targetMapIndex = this.getNearestMapPosition(endWorldPos)
+                    if(targetMapIndex >= 0) {
+                        // 放置到地图上
+                        this.placePlantOnMap(plantData, targetMapIndex)
+                    } else {
+                        // 拖到无效位置，返回原位置
+                        if(startPos) {
+                            plantData.node.setPosition(startPos)
+                        }
+                    }
+                } else {
+                    // 地图植物如果没有合成，返回原位置
+                    if(startPos) {
+                        plantData.node.setPosition(startPos)
+                    }
+                }
+            }
+            
+            this.dragStartPlant = null
+            startPos = null
+            event.stopPropagation()
+        }, plantData.node)
+    }
+    
+    /**
+     * 设置地图上植物的拖拽事件（只能合成）
+     */
+    private setupPlantDrag(plantData: PlantData) {
         let startPos: cc.Vec3 = null
         
         plantData.node.on(cc.Node.EventType.TOUCH_START, (event: cc.Event.EventTouch) => {
@@ -482,68 +591,29 @@ export default class GameUI extends cc.Component {
                 return
             }
             
-            // 获取触摸结束时的世界位置
-            const endWorldPos = plantData.node.position
-            
-            // 检查是否拖到地图上的植物位置（合成）
-            let targetPlant: PlantData = null
-            let minDistance = Infinity
-            
-            this.plants.forEach(plant => {
-                if(plant === plantData) return // 跳过自己
-                if(plant.positionIndex === -1) return // 跳过底部盒子的植物
-                
-                // 计算世界位置距离
-                const plantWorldPos = plant.node.position
-                const distance = endWorldPos.sub(plantWorldPos).mag()
-                
-                if(distance < 100 && distance < minDistance) { // 100像素范围内
-                    minDistance = distance
-                    targetPlant = plant
-                }
-            })
-            
-            if(targetPlant && plantData.plantItem.canMergeWith(targetPlant.plantItem)) {
-                // 可以合成
-                this.mergePlants(plantData, targetPlant)
-            } else {
-                // 检查是否拖到地图上的空位置
-                const targetMapIndex = this.getNearestMapPosition(endWorldPos)
-                if(targetMapIndex >= 0) {
-                    // 放置到地图上
-                    this.placePlantOnMap(plantData, targetMapIndex)
-                } else {
-                    // 拖到无效位置，返回原位置
-                    if(startPos) {
-                        plantData.node.setPosition(startPos)
-                    }
+            // 检查是否有指定的合成目标（点击自动合成）
+            if(plantData.targetMapPlantIndex !== undefined && plantData.targetMapPlantIndex >= 0) {
+                const targetPlant = this.plants.find(p => p.positionIndex === plantData.targetMapPlantIndex)
+                if(targetPlant && plantData.plantItem.canMergeWith(targetPlant.plantItem)) {
+                    // 直接与指定的地图植物合成
+                    this.mergePlants(plantData, targetPlant, targetPlant)
+                    this.dragStartPlant = null
+                    startPos = null
+                    event.stopPropagation()
+                    return
                 }
             }
             
-            this.dragStartPlant = null
-            startPos = null
-            event.stopPropagation()
-        }, plantData.node)
-    }
-    
-    /**
-     * 设置地图上植物的拖拽事件（只能合成）
-     */
-    private setupPlantDrag(plantData: PlantData) {
-        plantData.node.on(cc.Node.EventType.TOUCH_START, (event: cc.Event.EventTouch) => {
-            this.dragStartPlant = plantData
-            event.stopPropagation()
-        }, plantData.node)
-        
-        plantData.node.on(cc.Node.EventType.TOUCH_END, (event: cc.Event.EventTouch) => {
-            if(!this.dragStartPlant || this.dragStartPlant !== plantData) return
-            
-            // 检查是否拖到另一个植物上
+            // 检查是否拖到另一个植物上（地图植物只能拖到其他地图植物）
             let minDistance = Infinity
             let targetPlant: PlantData = null
             
             this.plants.forEach(plant => {
-                if(plant === plantData) return 
+                if(plant === plantData) return // 跳过自己
+                
+                // 地图植物只能拖到其他地图植物
+                if(plant.positionIndex < 0) return // 跳过底部盒子的植物
+                
                 // 计算两个植物节点之间的距离
                 const distance = plant.node.position.sub(plantData.node.position).mag()
                 if(distance < 150 && distance < minDistance) { // 150像素范围内
@@ -553,11 +623,17 @@ export default class GameUI extends cc.Component {
             })
             
             if(targetPlant && plantData.plantItem.canMergeWith(targetPlant.plantItem)) {
-                // 可以合成
-                this.mergePlants(plantData, targetPlant)
+                // 可以合成（plantData拖动到targetPlant，保留targetPlant的位置）
+                this.mergePlants(plantData, targetPlant, targetPlant)
+            } else {
+                // 如果没有合成，返回原位置
+                if(startPos) {
+                    plantData.node.setPosition(startPos)
+                }
             }
             
             this.dragStartPlant = null
+            startPos = null
             event.stopPropagation()
         }, plantData.node)
     }
@@ -628,40 +704,61 @@ export default class GameUI extends cc.Component {
     
     /**
      * 合成两个植物
+     * @param draggedPlant 被拖动的植物（会被销毁）
+     * @param targetPlant 目标植物（被拖到的植物，会保留位置）
+     * @param keepPlant 保留的植物（可选，如果不提供则自动判断）
      */
-    private mergePlants(plant1: PlantData, plant2: PlantData) {
-        // 确定哪个植物保留（优先保留地图上的植物）
-        let keepPlant: PlantData = plant1
-        let removePlant: PlantData = plant2
-        
-        // 如果plant1在底部盒子，plant2在地图，则保留plant2
-        if(plant1.positionIndex === -1 && plant2.positionIndex >= 0) {
-            keepPlant = plant2
-            removePlant = plant1
+    private mergePlants(draggedPlant: PlantData, targetPlant: PlantData, keepPlant?: PlantData) {
+        // 检查是否可以合成
+        if(!draggedPlant.plantItem.canMergeWith(targetPlant.plantItem)) {
+            console.log('植物不能合成：类型或等级不匹配')
+            return
         }
-        // 如果plant2在底部盒子，plant1在地图，则保留plant1
-        else if(plant2.positionIndex === -1 && plant1.positionIndex >= 0) {
-            keepPlant = plant1
-            removePlant = plant2
-        }
-        // 将removePlant的等级加到keepPlant上
-        const newLevel = keepPlant.plantItem.getLevel() + removePlant.plantItem.getLevel()
-        keepPlant.plantItem.setLevel(newLevel)
+        let finalKeepPlant: PlantData = keepPlant || targetPlant
+        let removePlant: PlantData = draggedPlant
         
-        // 如果keepPlant在底部盒子，需要更新位置
-        if(keepPlant.positionIndex === -1) {
-            // 保持在地图上的位置（如果有的话）
-            // 这里可以根据需要调整
+        if(!keepPlant) {
+            if(draggedPlant.positionIndex === -1 && targetPlant.positionIndex >= 0) {
+                finalKeepPlant = targetPlant
+                removePlant = draggedPlant
+            }
+            else if(targetPlant.positionIndex === -1 && draggedPlant.positionIndex >= 0) {
+                finalKeepPlant = draggedPlant
+                removePlant = targetPlant
+            }
+            // 如果都在地图上，保留targetPlant（被拖到的植物）
+            // 如果都在底部盒子，保留targetPlant（被拖到的植物）
+            else {
+                finalKeepPlant = targetPlant
+                removePlant = draggedPlant
+            }
         }
         
-        // 销毁removePlant
+        // 保存目标植物的位置（确保合成后位置不变）
+        const targetPosition = finalKeepPlant.node.position.clone()
+        const targetPositionIndex = finalKeepPlant.positionIndex
+        
+        // 计算新等级（两个相同等级的植物合成，等级相加）
+        const oldLevel = finalKeepPlant.plantItem.getLevel()
+        const removeLevel = removePlant.plantItem.getLevel()
+        const newLevel = oldLevel + removeLevel
+        
+        // 更新保留植物的等级（会自动更新spine皮肤和伤害）
+        finalKeepPlant.plantItem.setLevel(newLevel)
+        
+        // 确保保留植物在目标位置（防止位置偏移）
+        finalKeepPlant.node.setPosition(targetPosition)
+        finalKeepPlant.positionIndex = targetPositionIndex
+        finalKeepPlant.plantItem.setPositionIndex(targetPositionIndex)
+        
+        // 销毁被移除的植物
         const index = this.plants.indexOf(removePlant)
         if(index > -1) {
             this.plants.splice(index, 1)
         }
         removePlant.node.destroy()
-        
-        console.log(`植物合成成功，新等级：${newLevel}`)
+        this.onMoveButtonClick()
+        console.log(`植物合成成功：${oldLevel}级 + ${removeLevel}级 = ${newLevel}级，新攻击力：${newLevel}，位置保持在目标植物位置`)
     }
     
     

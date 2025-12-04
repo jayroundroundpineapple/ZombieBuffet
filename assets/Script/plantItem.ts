@@ -55,7 +55,12 @@ export default class plantItem extends cc.Component {
         
         // 设置skeletonData
         spineComponent.skeletonData = skeletonData
-        spineComponent.setSkin(`level${this.level}`);
+        
+        // 延迟设置皮肤，确保skeletonData已加载
+        this.scheduleOnce(() => {
+            this.updateSpineSkin();
+        }, 0.1);
+        
         this.scheduleOnce(() => {
             // 再次验证skeletonData
             if(!spineComponent.skeletonData) {
@@ -93,6 +98,30 @@ export default class plantItem extends cc.Component {
     public setLevel(level: number) {
         this.level = level;
         this.updateLevelLabel();
+        this.updateSpineSkin();
+    }
+    
+    /**
+     * 更新spine皮肤（根据等级）
+     */
+    private updateSpineSkin() {
+        if(!this.spineNode) return;
+        
+        const spineComponent = this.spineNode.getComponent(sp.Skeleton);
+        if(!spineComponent || !spineComponent.skeletonData) return;
+        
+        const skinName = `level${this.level}`;
+        try {
+            spineComponent.setSkin(skinName);
+        } catch(e) {
+            console.log(`设置皮肤失败：${skinName}，尝试使用默认皮肤`, e);
+            // 如果皮肤不存在，尝试使用默认皮肤
+            try {
+                spineComponent.setSkin('level1');
+            } catch(e2) {
+                console.log('设置默认皮肤失败', e2);
+            }
+        }
     }
     
     /**
