@@ -1,3 +1,5 @@
+import mosterItem from "./mosterItem";
+
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -24,29 +26,10 @@ export default class bulletItem extends cc.Component {
         this.targetPos = targetPos ? targetPos.clone() : null;
         this.targetMonsterNode = targetMonsterNode;
         this.isExploded = false;
-        console.log('子弹父节点/子弹位置', this.node.parent.name, this.node.position, level, startPos, targetPos, targetMonsterNode)
-        // 设置位置
-        if(startPos) {
-            this.node.setPosition(startPos);
-        } else {
-            console.error('子弹起始位置无效')
-            return
-        }
-        if(!this.targetPos) {
-            console.error('子弹目标位置无效')
-            return
-        }
-        
-        // 设置SkeletonData（根据植物type）
+        this.node.setPosition(startPos);
         this.setupSpineData();
-        
-        // 设置皮肤（根据植物等级）
         this.setupSkin();
-        
-        // 播放初始动画
         this.playAnimation();
-        
-        console.log(`子弹初始化完成：类型=${plantType}, 等级=${level}, 位置=(${startPos.x.toFixed(0)}, ${startPos.y.toFixed(0)})`)
     }
     
     /**
@@ -109,7 +92,7 @@ export default class bulletItem extends cc.Component {
         
         this.isExploded = true;
         this.playAnimation('explosion1');
-        
+        this.targetMonsterNode.getComponent(mosterItem).playHurtAnimation()
         // 监听爆炸动画完成
         if(callback) {
             try {

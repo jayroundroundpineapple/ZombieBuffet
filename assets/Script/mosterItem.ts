@@ -22,6 +22,7 @@ export default class mosterItem extends cc.Component {
     public setType(type: number) {
         this.type = 1;
         this.spineNode.getComponent(sp.Skeleton).setSkin(`level${type}`);
+        this.playIdleAnimation();
     }
     /**
      * 获取当前血条
@@ -48,6 +49,10 @@ export default class mosterItem extends cc.Component {
      * 播放移动动画
      */
     public playWalkAnimation() {
+        // 如果怪物已经死亡，不播放移动动画
+        if(this.isDead()) {
+            return;
+        }
         try {
             const spineComponent = this.node.getComponentInChildren(sp.Skeleton);
             if(spineComponent) {
@@ -62,6 +67,10 @@ export default class mosterItem extends cc.Component {
      * 播放待机动画
      */
     public playIdleAnimation() {
+        // 如果怪物已经死亡，不播放待机动画
+        if(this.isDead()) {
+            return;
+        }
         try {
             const spineComponent = this.node.getComponentInChildren(sp.Skeleton);
             if(spineComponent) {
@@ -73,13 +82,15 @@ export default class mosterItem extends cc.Component {
     }
     public playDeadAnimation(callback?: () => void) {
         try {
-            const spineComponent = this.node.getComponentInChildren(sp.Skeleton);
+            const spineComponent = this.spineNode.getComponent(sp.Skeleton);
             if(spineComponent) {
-                spineComponent.setAnimation(0, 'dead', false);
+                spineComponent.clearTracks();
+                spineComponent.setAnimation(0, 'die', false);
+                this.hpLabel.node.active = false;
                 // 设置动画完成监听
                 if(callback) {
                     spineComponent.setCompleteListener((entry) => {
-                        if(entry && entry.animation && entry.animation.name === 'dead') {
+                        if(entry && entry.animation && entry.animation.name === 'die') {
                             callback();
                             // 移除监听，避免重复调用
                             spineComponent.setCompleteListener(null);

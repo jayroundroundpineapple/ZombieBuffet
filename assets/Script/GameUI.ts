@@ -229,8 +229,9 @@ export default class GameUI extends cc.Component {
                 cc.tween(monster.node)
                     .to(0.8, { position: targetPos }, { easing: 'sineOut' })
                     .call(()=>{
-                        // 播放待机动画
-                        monster.mosterItem.playIdleAnimation()
+                        if(monster.node && monster.node.isValid && !monster.mosterItem.isDead()){
+                            monster.mosterItem.playIdleAnimation()
+                        }
                     })
                     .start()
             }
