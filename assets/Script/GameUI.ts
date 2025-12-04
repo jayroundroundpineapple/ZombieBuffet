@@ -257,7 +257,8 @@ export default class GameUI extends cc.Component {
         if(!frontMonster) return
         
         const targetMonsterNode = frontMonster.node
-        const targetPos = targetMonsterNode.position
+        // 获取怪物在世界坐标系中的位置（相对于mapNode）
+        const targetPos = targetMonsterNode.position.clone()
         
         // 计算所有植物的总攻击力（只计算地图上的植物，不包括底部盒子的植物）
         let totalDamage = 0
@@ -268,10 +269,8 @@ export default class GameUI extends cc.Component {
                 
                 // 播放攻击动画
                 plant.plantItem.playAttackAnimation()
-                
-                // 生成子弹
-                this.createBullet(plant, targetPos)
-                
+                // 生成子弹（每个植物射向同一个目标怪物）
+                this.createBullet(plant, targetMonsterNode)
                 // 攻击动画结束后恢复待机
                 plant.plantItem.scheduleOnce(() => {
                     plant.plantItem.playIdleAnimation()
@@ -328,17 +327,7 @@ export default class GameUI extends cc.Component {
     /**
      * 创建子弹
      */
-    private createBullet(plant: PlantData, targetPos: cc.Vec3) {
-        if(!this.bulletPre) {
-            console.error('子弹预制体未设置')
-            return
-        }
-        
-        if(!plant || !plant.node || !plant.node.isValid) {
-            console.error('植物节点无效')
-            return
-        }
-        
+    private createBullet(plant: PlantData, targetMonsterNode: cc.Node) {
         // 从节点池获取子弹
         let bulletNode: cc.Node = null
         
@@ -346,7 +335,6 @@ export default class GameUI extends cc.Component {
             // 从池中取出（节点已经在mapNode下，不需要重新设置父节点）
             bulletNode = this.bulletPool.pop()
             if(!bulletNode || !bulletNode.isValid) {
-                // 如果节点无效，创建新的
                 bulletNode = cc.instantiate(this.bulletPre)
                 bulletNode.parent = this.mapNode
             } else {
@@ -368,16 +356,12 @@ export default class GameUI extends cc.Component {
             return
         }
         
-        // 初始化子弹
-        const plantPos = plant.plantItem.getPlantPosition()
-        if(!plantPos) {
-            console.error('植物位置无效')
-            if(bulletNode && bulletNode.isValid) {
-                bulletNode.active = false
-                this.bulletPool.push(bulletNode)
-            }
-            return
-        }
+        // 获取植物位置（相对于mapNode的世界坐标）
+        // const plantPos = plant.node.position.clone()
+        const plantPos = GameConf.plantMapPosArr[plant.positionIndex]
+        
+        // 获取怪物位置（相对于mapNode的世界坐标）
+        const targetPos = targetMonsterNode.position.clone()
         
         // 确保子弹节点是激活的
         bulletNode.active = true
@@ -386,14 +370,14 @@ export default class GameUI extends cc.Component {
             plant.plantItem.getType(),
             plant.plantItem.getLevel(),
             plantPos,
-            targetPos
+            targetPos,
+            targetMonsterNode
         )
         
         // 设置爆炸完成回调，回收子弹
         bulletComponent.setExplosionCallback(() => {
             this.recycleBullet(bulletNode)
         })
-        
         // 添加到活跃列表
         this.activeBullets.push(bulletNode)
     }
@@ -409,13 +393,11 @@ export default class GameUI extends cc.Component {
         if(index > -1) {
             this.activeBullets.splice(index, 1)
         }
-        
         // 重置子弹
         const bulletComponent = bulletNode.getComponent(bulletItem)
         if(bulletComponent) {
             bulletComponent.reset()
         }
-        
         // 隐藏并回收到池中
         bulletNode.active = false
         this.bulletPool.push(bulletNode)

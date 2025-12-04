@@ -52,8 +52,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        312.96,
-        546.208,
+        0,
+        0,
         0,
         0,
         0,
@@ -226,12 +226,12 @@
         "__uuid__": "a153945d-2511-4c14-be7b-05d242f47d57"
       }
     ],
-    "_lineWidth": 2,
+    "_lineWidth": 1,
     "_strokeColor": {
       "__type__": "cc.Color",
-      "r": 0,
+      "r": 255,
       "g": 0,
-      "b": 255,
+      "b": 0,
       "a": 255
     },
     "_lineJoin": 2,
@@ -254,7 +254,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "2fIVnCjqpD9JSed8XivX8M",
+    "fileId": "b2RKu2fqZDPKKXWNfMU3gI",
     "sync": false
   },
   {

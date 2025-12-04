@@ -11,18 +11,20 @@ export default class bulletItem extends cc.Component {
     private plantType: number = 0; // 植物类型
     private level: number = 1; // 植物等级
     private targetPos: cc.Vec3 = null; // 目标位置
+    private targetMonsterNode: cc.Node = null; // 目标怪物节点（用于动态更新位置）
     private moveSpeed: number = 800; // 移动速度
     private isExploded: boolean = false; // 是否已爆炸
     
     /**
      * 初始化子弹
      */
-    public init(plantType: number, level: number, startPos: cc.Vec3, targetPos: cc.Vec3) {
+    public init(plantType: number, level: number, startPos: cc.Vec3, targetPos: cc.Vec3, targetMonsterNode?: cc.Node) {
         this.plantType = plantType;
         this.level = level;
         this.targetPos = targetPos ? targetPos.clone() : null;
+        this.targetMonsterNode = targetMonsterNode;
         this.isExploded = false;
-        
+        console.log('子弹父节点/子弹位置', this.node.parent.name, this.node.position, level, startPos, targetPos, targetMonsterNode)
         // 设置位置
         if(startPos) {
             this.node.setPosition(startPos);
@@ -106,7 +108,7 @@ export default class bulletItem extends cc.Component {
         if(this.isExploded) return;
         
         this.isExploded = true;
-        this.playAnimation('explosion');
+        this.playAnimation('explosion1');
         
         // 监听爆炸动画完成
         if(callback) {
@@ -114,7 +116,7 @@ export default class bulletItem extends cc.Component {
                 const spineComponent = this.bulletSpine ? this.bulletSpine.getComponent(sp.Skeleton) : null;
                 if(spineComponent) {
                     spineComponent.setCompleteListener((entry) => {
-                        if(entry && entry.animation && entry.animation.name === 'explosion') {
+                        if(entry && entry.animation && entry.animation.name === 'explosion1') {
                             callback();
                             spineComponent.setCompleteListener(null);
                         }
@@ -149,7 +151,14 @@ export default class bulletItem extends cc.Component {
      * 更新子弹移动
      */
     protected update(dt: number) {
-        if(!this.targetPos || this.isExploded || !this.node || !this.node.isValid) return;
+        if(this.isExploded || !this.node || !this.node.isValid) return;
+        
+        // 如果目标怪物节点存在且有效，动态更新目标位置
+        if(this.targetMonsterNode && this.targetMonsterNode.isValid) {
+            this.targetPos = this.targetMonsterNode.position.clone();
+        }
+        
+        if(!this.targetPos) return;
         
         const currentPos = this.node.position;
         const direction = this.targetPos.sub(currentPos);
@@ -180,6 +189,7 @@ export default class bulletItem extends cc.Component {
      */
     public reset() {
         this.targetPos = null;
+        this.targetMonsterNode = null;
         this.isExploded = false;
         this.explosionCallback = null;
         this.node.setPosition(0, 0, 0);

@@ -44,20 +44,6 @@ export default class plantItem extends cc.Component {
         }
         
         const spineComponent = this.spineNode.getComponent(sp.Skeleton)
-        if(!spineComponent) {
-            console.error('spineNode上未找到sp.Skeleton组件')
-            return
-        }
-        
-        if(!this.spineDataArr || this.spineDataArr.length === 0) {
-            console.error('spineDataArr未设置或为空')
-            return
-        }
-        
-        if(type < 0 || type >= this.spineDataArr.length) {
-            console.error(`植物类型索引超出范围：${type}，有效范围：0-${this.spineDataArr.length - 1}`)
-            return
-        }
         
         const skeletonData = this.spineDataArr[type]
         if(!skeletonData) {
@@ -266,27 +252,6 @@ export default class plantItem extends cc.Component {
             if(!spineComponent) {
                 spineComponent = this.node.getComponentInChildren(sp.Skeleton)
             }
-            
-            // 调试信息
-            if(!spineComponent) {
-                console.log('无法播放攻击动画：spineComponent为空', {
-                    spineNode: this.spineNode,
-                    hasSpineNode: !!this.spineNode,
-                    node: this.node
-                })
-                return
-            }
-            
-            if(!spineComponent.skeletonData) {
-                console.log('无法播放攻击动画：skeletonData为空', {
-                    spineComponent: spineComponent,
-                    skeletonData: spineComponent.skeletonData,
-                    plantType: this.plantType,
-                    spineDataArr: this.spineDataArr
-                })
-                return
-            }
-            
             spineComponent.setAnimation(0, 'attack', false);
         } catch(e) {
             console.log('播放攻击动画失败', e);
