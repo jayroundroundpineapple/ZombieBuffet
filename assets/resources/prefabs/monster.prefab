@@ -55,8 +55,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        60,
-        -430,
+        0,
+        0,
         0,
         0,
         0,
@@ -82,7 +82,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "mosterSpine",
+    "_name": "monster",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -107,8 +107,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 105.04002380371094,
-      "height": 150.9182891845703
+      "width": 110.7,
+      "height": 135.61
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -158,11 +158,11 @@
       }
     ],
     "paused": false,
-    "defaultSkin": 4,
+    "defaultSkin": "default",
     "defaultAnimation": "idle",
-    "_preCacheMode": 0,
-    "_cacheMode": 0,
-    "loop": false,
+    "_preCacheMode": 2,
+    "_cacheMode": 2,
+    "loop": true,
     "premultipliedAlpha": true,
     "timeScale": 1,
     "_accTime": 0,
@@ -173,12 +173,12 @@
     "_animationName": "idle",
     "_animationQueue": [],
     "_headAniInfo": null,
-    "_playTimes": 1,
+    "_playTimes": 0,
     "_isAniComplete": true,
     "_N$skeletonData": {
-      "__uuid__": "92fc8556-d943-4b02-8b4a-f0f4bbad2296"
+      "__uuid__": "5fde6c8c-3d2f-4ce9-be7b-0ac9992efa13"
     },
-    "_N$_defaultCacheMode": 0,
+    "_N$_defaultCacheMode": 2,
     "_N$debugSlots": false,
     "_N$debugBones": false,
     "_N$debugMesh": false,
@@ -194,7 +194,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "2aT5ZtzTJBIpST4ookKQ/q",
+    "fileId": "f0z9jI4mxIpaTXdManNuTx",
     "sync": false
   },
   {
@@ -336,6 +336,9 @@
     "_enabled": true,
     "hpLabel": {
       "__id__": 6
+    },
+    "spineNode": {
+      "__id__": 2
     },
     "_id": ""
   },

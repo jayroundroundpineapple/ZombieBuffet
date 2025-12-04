@@ -98,6 +98,7 @@ export default class GameUI extends cc.Component {
         
         // 创建三个怪物，血条分别为11/8/12
         const hpList = [12, 8, 11]
+        const typeList = [3, 3, 1]
         // 初始位置索引：最后一只在索引0(-268)，第二只在索引1(-160)，第一只在索引2(-50)
         const initialPosIndexes = [0, 1, 2]
         
@@ -107,6 +108,7 @@ export default class GameUI extends cc.Component {
             
             // 获取mosterItem组件（应该在预制体上已经挂载）
             const monsterItemComponent = monsterNode.getComponent(mosterItem)
+            monsterItemComponent.setType(typeList[i])
             if(!monsterItemComponent){
                 console.error('预制体上未找到mosterItem组件，请确保已挂载mosterItem脚本')
                 continue
@@ -332,27 +334,54 @@ export default class GameUI extends cc.Component {
             return
         }
         
+        if(!plant || !plant.node || !plant.node.isValid) {
+            console.error('植物节点无效')
+            return
+        }
+        
         // 从节点池获取子弹
         let bulletNode: cc.Node = null
         
         if(this.bulletPool.length > 0) {
             // 从池中取出（节点已经在mapNode下，不需要重新设置父节点）
             bulletNode = this.bulletPool.pop()
-            bulletNode.active = true
+            if(!bulletNode || !bulletNode.isValid) {
+                // 如果节点无效，创建新的
+                bulletNode = cc.instantiate(this.bulletPre)
+                bulletNode.parent = this.mapNode
+            } else {
+                bulletNode.active = true
+            }
         } else {
+            // 创建新子弹
             bulletNode = cc.instantiate(this.bulletPre)
             bulletNode.parent = this.mapNode
         }
+        
         // 获取bulletItem组件
         const bulletComponent = bulletNode.getComponent(bulletItem)
         if(!bulletComponent) {
             console.error('子弹预制体上未找到bulletItem组件')
-            bulletNode.destroy()
+            if(bulletNode && bulletNode.isValid) {
+                bulletNode.destroy()
+            }
             return
         }
         
         // 初始化子弹
         const plantPos = plant.plantItem.getPlantPosition()
+        if(!plantPos) {
+            console.error('植物位置无效')
+            if(bulletNode && bulletNode.isValid) {
+                bulletNode.active = false
+                this.bulletPool.push(bulletNode)
+            }
+            return
+        }
+        
+        // 确保子弹节点是激活的
+        bulletNode.active = true
+        
         bulletComponent.init(
             plant.plantItem.getType(),
             plant.plantItem.getLevel(),
@@ -531,8 +560,7 @@ export default class GameUI extends cc.Component {
             let targetPlant: PlantData = null
             
             this.plants.forEach(plant => {
-                if(plant === plantData) return // 跳过自己
-                
+                if(plant === plantData) return 
                 // 计算两个植物节点之间的距离
                 const distance = plant.node.position.sub(plantData.node.position).mag()
                 if(distance < 150 && distance < minDistance) { // 150像素范围内
@@ -594,27 +622,22 @@ export default class GameUI extends cc.Component {
         // 更新植物位置索引
         plantData.positionIndex = mapIndex
         plantData.plantItem.setPositionIndex(mapIndex)
-        
         // 改变父节点到地图
         plantData.node.parent = this.mapNode
-        
         // 设置位置
         plantData.node.setPosition(GameConf.plantMapPosArr[mapIndex])
-        
         // 更新拖拽事件（地图上的植物只能合成）
         plantData.node.off(cc.Node.EventType.TOUCH_START)
         plantData.node.off(cc.Node.EventType.TOUCH_MOVE)
         plantData.node.off(cc.Node.EventType.TOUCH_END)
         this.setupPlantDrag(plantData)
     }
-    
     /**
      * 将植物返回到底部盒子（拖到无效位置时）
      */
     private returnPlantToBox(plantData: PlantData) {
         // 恢复到底部盒子
         plantData.node.parent = this.bottomPlantBox
-        
         // 恢复原始位置（根据类型和等级找到原始位置，这里简化处理）
         // 可以根据需要优化，这里先放回中心
         plantData.node.setPosition(0, 0, 0)
@@ -638,9 +661,6 @@ export default class GameUI extends cc.Component {
             keepPlant = plant1
             removePlant = plant2
         }
-        // 如果都在地图上，保留plant1
-        // 如果都在底部盒子，保留plant1
-        
         // 将removePlant的等级加到keepPlant上
         const newLevel = keepPlant.plantItem.getLevel() + removePlant.plantItem.getLevel()
         keepPlant.plantItem.setLevel(newLevel)

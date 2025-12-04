@@ -20,8 +20,6 @@ export default class plantItem extends cc.Component {
     private isAttacking: boolean = false; //是否正在攻击
     
     protected onLoad(): void {
-        // 初始播放待机动画
-        this.playIdleAnimation();
         // 初始化等级显示
         this.updateLevelLabel();
     }
@@ -38,7 +36,62 @@ export default class plantItem extends cc.Component {
      */
     public setType(type: number) {
         this.plantType = type;
-        // this.spineNode.getComponent(sp.Skeleton).skeletonData = this.spineDataArr[type];
+        
+        // 设置spine动画数据
+        if(!this.spineNode) {
+            console.error('spineNode未设置')
+            return
+        }
+        
+        const spineComponent = this.spineNode.getComponent(sp.Skeleton)
+        if(!spineComponent) {
+            console.error('spineNode上未找到sp.Skeleton组件')
+            return
+        }
+        
+        if(!this.spineDataArr || this.spineDataArr.length === 0) {
+            console.error('spineDataArr未设置或为空')
+            return
+        }
+        
+        if(type < 0 || type >= this.spineDataArr.length) {
+            console.error(`植物类型索引超出范围：${type}，有效范围：0-${this.spineDataArr.length - 1}`)
+            return
+        }
+        
+        const skeletonData = this.spineDataArr[type]
+        if(!skeletonData) {
+            console.error(`spineDataArr[${type}]为空`)
+            return
+        }
+        // 确保spine组件已启用
+        spineComponent.enabled = true
+        
+        // 设置skeletonData
+        spineComponent.skeletonData = skeletonData
+        spineComponent.setSkin(`level${this.level}`);
+        this.scheduleOnce(() => {
+            // 再次验证skeletonData
+            if(!spineComponent.skeletonData) {
+                console.error('延迟后skeletonData丢失！', {
+                    spineComponent: spineComponent,
+                    plantType: this.plantType
+                })
+                return
+            }
+            
+            // 尝试播放idle动画
+            try {
+                spineComponent.setAnimation(0, 'idle', true)
+                console.log('成功播放idle动画')
+            } catch(e) {
+                // 如果idle动画不存在，尝试播放第一个动画
+                console.log('idle动画不存在，尝试播放默认动画', e)
+                if(spineComponent.defaultAnimation) {
+                    spineComponent.setAnimation(0, spineComponent.defaultAnimation, true)
+                }
+            }
+        }, 0.1)
     }
     
     /**
@@ -161,10 +214,38 @@ export default class plantItem extends cc.Component {
      */
     public playIdleAnimation() {
         try {
-            const spineComponent = this.node.getComponentInChildren(sp.Skeleton);
-            if(spineComponent) {
-                spineComponent.setAnimation(0, 'idle', true);
+            // 优先使用spineNode
+            let spineComponent: sp.Skeleton = null
+            if(this.spineNode) {
+                spineComponent = this.spineNode.getComponent(sp.Skeleton)
             }
+            
+            // 如果spineNode没有，尝试从子节点查找
+            if(!spineComponent) {
+                spineComponent = this.node.getComponentInChildren(sp.Skeleton)
+            }
+            
+            // 调试信息
+            if(!spineComponent) {
+                console.log('无法播放待机动画：spineComponent为空', {
+                    spineNode: this.spineNode,
+                    hasSpineNode: !!this.spineNode,
+                    node: this.node
+                })
+                return
+            }
+            
+            if(!spineComponent.skeletonData) {
+                console.log('无法播放待机动画：skeletonData为空', {
+                    spineComponent: spineComponent,
+                    skeletonData: spineComponent.skeletonData,
+                    plantType: this.plantType,
+                    spineDataArr: this.spineDataArr
+                })
+                return
+            }
+            
+            spineComponent.setAnimation(0, 'idle', true);
         } catch(e) {
             console.log('播放待机动画失败', e);
         }
@@ -175,10 +256,38 @@ export default class plantItem extends cc.Component {
      */
     public playAttackAnimation() {
         try {
-            const spineComponent = this.node.getComponentInChildren(sp.Skeleton);
-            if(spineComponent) {
-                spineComponent.setAnimation(0, 'attack', false);
+            // 优先使用spineNode
+            let spineComponent: sp.Skeleton = null
+            if(this.spineNode) {
+                spineComponent = this.spineNode.getComponent(sp.Skeleton)
             }
+            
+            // 如果spineNode没有，尝试从子节点查找
+            if(!spineComponent) {
+                spineComponent = this.node.getComponentInChildren(sp.Skeleton)
+            }
+            
+            // 调试信息
+            if(!spineComponent) {
+                console.log('无法播放攻击动画：spineComponent为空', {
+                    spineNode: this.spineNode,
+                    hasSpineNode: !!this.spineNode,
+                    node: this.node
+                })
+                return
+            }
+            
+            if(!spineComponent.skeletonData) {
+                console.log('无法播放攻击动画：skeletonData为空', {
+                    spineComponent: spineComponent,
+                    skeletonData: spineComponent.skeletonData,
+                    plantType: this.plantType,
+                    spineDataArr: this.spineDataArr
+                })
+                return
+            }
+            
+            spineComponent.setAnimation(0, 'attack', false);
         } catch(e) {
             console.log('播放攻击动画失败', e);
         }

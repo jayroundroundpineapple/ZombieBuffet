@@ -1,299 +1,299 @@
 
 bullet_4yc.png
-size: 110,401
+size: 313, 141
 format: RGBA8888
-filter: Linear,Linear
+filter: Linear, Linear
 repeat: none
 bulletc1
   rotate: false
-  xy: 71, 338
+  xy: 0, 7
   size: 39, 63
   orig: 39, 63
   offset: 0, 0
   index: -1
 bulletc16
-  rotate: true
-  xy: 0, 358
+  rotate: false
+  xy: 0, 72
   size: 43, 69
   orig: 43, 69
   offset: 0, 0
   index: -1
 bulletc2
   rotate: false
-  xy: 65, 208
+  xy: 186, 78
   size: 39, 63
   orig: 39, 63
   offset: 0, 0
   index: -1
 bulletc32
-  rotate: true
-  xy: 0, 264
+  rotate: false
+  xy: 45, 78
   size: 45, 63
   orig: 45, 63
   offset: 0, 0
   index: -1
 bulletc4
-  rotate: true
-  xy: 0, 311
+  rotate: false
+  xy: 92, 78
   size: 45, 63
   orig: 45, 63
   offset: 0, 0
   index: -1
 bulletc8
   rotate: false
-  xy: 65, 273
+  xy: 139, 78
   size: 45, 63
   orig: 45, 63
   offset: 0, 0
   index: -1
 bulletc_a_1
   rotate: false
-  xy: 30, 62
+  xy: 127, 26
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 bulletc_a_16
   rotate: false
-  xy: 26, 36
+  xy: 131, 0
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 bulletc_a_2
   rotate: false
-  xy: 86, 64
+  xy: 153, 26
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 bulletc_a_32
   rotate: true
-  xy: 92, 138
+  xy: 207, 56
   size: 20, 18
   orig: 20, 18
   offset: 0, 0
   index: -1
 bulletc_a_4
   rotate: false
-  xy: 0, 54
+  xy: 157, 0
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 bulletc_a_8
   rotate: false
-  xy: 56, 58
+  xy: 179, 26
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 bulletc_b_1
-  rotate: true
-  xy: 64, 184
+  rotate: false
+  xy: 291, 109
   size: 22, 32
   orig: 22, 32
   offset: 0, 0
   index: -1
 bulletc_b_16
-  rotate: true
-  xy: 0, 132
+  rotate: false
+  xy: 291, 75
   size: 22, 32
   orig: 22, 32
   offset: 0, 0
   index: -1
 bulletc_b_2
   rotate: true
-  xy: 64, 160
+  xy: 227, 63
   size: 22, 32
   orig: 22, 32
   offset: 0, 0
   index: -1
 bulletc_b_32
   rotate: true
-  xy: 58, 136
+  xy: 45, 54
   size: 22, 32
   orig: 22, 32
   offset: 0, 0
   index: -1
 bulletc_b_4
   rotate: true
-  xy: 0, 156
+  xy: 79, 54
   size: 22, 32
   orig: 22, 32
   offset: 0, 0
   index: -1
 bulletc_b_8
-  rotate: false
-  xy: 34, 146
+  rotate: true
+  xy: 113, 54
   size: 22, 32
   orig: 22, 32
   offset: 0, 0
   index: -1
 bulletc_c_1
   rotate: false
-  xy: 0, 236
+  xy: 227, 115
   size: 30, 26
   orig: 30, 26
   offset: 0, 0
   index: -1
 bulletc_c_16
   rotate: false
-  xy: 0, 180
+  xy: 227, 87
   size: 30, 26
   orig: 30, 26
   offset: 0, 0
   index: -1
 bulletc_c_2
   rotate: false
-  xy: 32, 236
+  xy: 259, 115
   size: 30, 26
   orig: 30, 26
   offset: 0, 0
   index: -1
 bulletc_c_32
   rotate: false
-  xy: 32, 180
+  xy: 259, 87
   size: 30, 26
   orig: 30, 26
   offset: 0, 0
   index: -1
 bulletc_c_4
   rotate: false
-  xy: 0, 208
+  xy: 41, 26
   size: 30, 26
   orig: 30, 26
   offset: 0, 0
   index: -1
 bulletc_c_8
   rotate: false
-  xy: 32, 208
+  xy: 73, 26
   size: 30, 26
   orig: 30, 26
   offset: 0, 0
   index: -1
 bulletc_d_1
   rotate: false
-  xy: 0, 106
+  xy: 261, 61
   size: 28, 24
   orig: 28, 24
   offset: 0, 0
   index: -1
 bulletc_d_16
   rotate: false
-  xy: 0, 80
+  xy: 41, 0
   size: 28, 24
   orig: 28, 24
   offset: 0, 0
   index: -1
 bulletc_d_2
   rotate: false
-  xy: 56, 110
+  xy: 71, 0
   size: 28, 24
   orig: 28, 24
   offset: 0, 0
   index: -1
 bulletc_d_32
   rotate: false
-  xy: 56, 84
+  xy: 101, 0
   size: 28, 24
   orig: 28, 24
   offset: 0, 0
   index: -1
 bulletc_d_4
-  rotate: true
-  xy: 30, 88
+  rotate: false
+  xy: 147, 52
   size: 28, 24
   orig: 28, 24
   offset: 0, 0
   index: -1
 bulletc_d_8
-  rotate: true
-  xy: 86, 90
+  rotate: false
+  xy: 177, 52
   size: 28, 24
   orig: 28, 24
   offset: 0, 0
   index: -1
 bulletc_e_1
   rotate: false
-  xy: 92, 120
+  xy: 207, 38
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 bulletc_e_16
   rotate: false
-  xy: 50, 0
+  xy: 211, 20
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 bulletc_e_2
   rotate: false
-  xy: 0, 8
+  xy: 211, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 bulletc_e_32
   rotate: false
-  xy: 86, 2
+  xy: 229, 23
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 bulletc_e_4
   rotate: false
-  xy: 50, 18
+  xy: 229, 5
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 bulletc_e_8
   rotate: false
-  xy: 68, 2
+  xy: 247, 21
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 bulletc_f_1
   rotate: true
-  xy: 34, 118
+  xy: 105, 26
   size: 26, 20
   orig: 26, 20
   offset: 0, 0
   index: -1
 bulletc_f_16
   rotate: false
-  xy: 80, 20
+  xy: 183, 4
   size: 26, 20
   orig: 26, 20
   offset: 0, 0
   index: -1
 bulletc_f_2
   rotate: true
-  xy: 0, 26
+  xy: 291, 47
   size: 26, 20
   orig: 26, 20
   offset: 0, 0
   index: -1
 bulletc_f_32
   rotate: false
-  xy: 22, 14
+  xy: 227, 41
   size: 26, 20
   orig: 26, 20
   offset: 0, 0
   index: -1
 bulletc_f_4
   rotate: false
-  xy: 82, 42
+  xy: 255, 39
   size: 26, 20
   orig: 26, 20
   offset: 0, 0
   index: -1
 bulletc_f_8
   rotate: false
-  xy: 52, 36
+  xy: 283, 25
   size: 26, 20
   orig: 26, 20
   offset: 0, 0

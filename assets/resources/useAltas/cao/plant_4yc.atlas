@@ -1,278 +1,278 @@
 
 plant_4yc.png
-size: 760,150
+size: 758, 149
 format: RGBA8888
-filter: Linear,Linear
+filter: Linear, Linear
 repeat: none
 4yc/c
   rotate: true
-  xy: 427, 69
+  xy: 427, 68
   size: 81, 25
   orig: 81, 25
   offset: 0, 0
   index: -1
 4yc/g
   rotate: true
-  xy: 332, 9
+  xy: 206, 8
   size: 49, 48
   orig: 49, 48
   offset: 0, 0
   index: -1
 4yc/q1
   rotate: false
-  xy: 454, 78
+  xy: 454, 77
   size: 72, 72
   orig: 72, 72
   offset: 0, 0
   index: -1
 4yc/y
   rotate: false
-  xy: 498, 1
+  xy: 728, 91
   size: 25, 25
   orig: 25, 25
   offset: 0, 0
   index: -1
 4yc/y1
   rotate: false
-  xy: 697, 51
+  xy: 662, 36
   size: 32, 33
   orig: 32, 33
   offset: 0, 0
   index: -1
 4yc/y2
   rotate: false
-  xy: 725, 119
+  xy: 662, 3
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
   index: -1
 4yc/y3
-  rotate: false
-  xy: 725, 86
+  rotate: true
+  xy: 699, 16
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
   index: -1
 4yc/y4
   rotate: true
-  xy: 697, 18
+  xy: 728, 118
   size: 31, 30
   orig: 31, 30
   offset: 0, 0
   index: -1
 4yc1_1
   rotate: true
-  xy: 206, 8
+  xy: 80, 7
   size: 50, 40
   orig: 50, 40
   offset: 0, 0
   index: -1
 4yc1_16
   rotate: true
-  xy: 528, 102
+  xy: 296, 9
   size: 48, 37
   orig: 48, 37
   offset: 0, 0
   index: -1
 4yc1_2
   rotate: true
-  xy: 248, 8
+  xy: 122, 7
   size: 50, 40
   orig: 50, 40
   offset: 0, 0
   index: -1
 4yc1_32
   rotate: true
-  xy: 425, 10
+  xy: 256, 8
   size: 49, 38
   orig: 49, 38
   offset: 0, 0
   index: -1
 4yc1_4
   rotate: true
-  xy: 290, 8
+  xy: 164, 7
   size: 50, 40
   orig: 50, 40
   offset: 0, 0
   index: -1
 4yc1_8
   rotate: true
-  xy: 498, 28
+  xy: 335, 9
   size: 48, 37
   orig: 48, 37
   offset: 0, 0
   index: -1
 4yc2_1
-  rotate: false
-  xy: 567, 104
+  rotate: true
+  xy: 574, 2
   size: 38, 46
   orig: 38, 46
   offset: 0, 0
   index: -1
 4yc2_16
   rotate: false
-  xy: 607, 106
+  xy: 610, 105
   size: 38, 44
   orig: 38, 44
   offset: 0, 0
   index: -1
 4yc2_2
   rotate: false
-  xy: 537, 5
+  xy: 570, 103
   size: 38, 46
   orig: 38, 46
   offset: 0, 0
   index: -1
 4yc2_32
   rotate: false
-  xy: 537, 53
+  xy: 534, 42
   size: 40, 47
   orig: 40, 47
   offset: 0, 0
   index: -1
 4yc2_4
   rotate: false
-  xy: 577, 5
+  xy: 576, 55
   size: 38, 46
   orig: 38, 46
   offset: 0, 0
   index: -1
 4yc2_8
   rotate: false
-  xy: 579, 58
+  xy: 616, 59
   size: 38, 44
   orig: 38, 44
   offset: 0, 0
   index: -1
 4yc3_1
   rotate: true
-  xy: 80, 0
+  xy: 374, 0
   size: 58, 40
   orig: 58, 40
   offset: 0, 0
   index: -1
 4yc3_16
   rotate: true
-  xy: 40, 1
+  xy: 0, 0
   size: 56, 38
   orig: 56, 38
   offset: 0, 0
   index: -1
 4yc3_2
   rotate: true
-  xy: 122, 0
+  xy: 416, 0
   size: 58, 40
   orig: 58, 40
   offset: 0, 0
   index: -1
 4yc3_32
   rotate: true
-  xy: 382, 0
+  xy: 491, 16
   size: 59, 41
   orig: 59, 41
   offset: 0, 0
   index: -1
 4yc3_4
   rotate: true
-  xy: 164, 0
+  xy: 528, 91
   size: 58, 40
   orig: 58, 40
   offset: 0, 0
   index: -1
 4yc3_8
   rotate: true
-  xy: 0, 1
+  xy: 40, 0
   size: 56, 38
   orig: 56, 38
   offset: 0, 0
   index: -1
 4yc4_1
   rotate: false
-  xy: 619, 66
+  xy: 650, 111
   size: 38, 38
   orig: 38, 38
   offset: 0, 0
   index: -1
 4yc4_16
   rotate: true
-  xy: 687, 112
+  xy: 690, 111
   size: 38, 36
   orig: 38, 36
   offset: 0, 0
   index: -1
 4yc4_2
   rotate: false
-  xy: 647, 112
+  xy: 622, 19
   size: 38, 38
   orig: 38, 38
   offset: 0, 0
   index: -1
 4yc4_32
   rotate: false
-  xy: 617, 17
+  xy: 534, 1
   size: 38, 39
   orig: 38, 39
   offset: 0, 0
   index: -1
 4yc4_4
   rotate: false
-  xy: 657, 26
+  xy: 656, 71
   size: 38, 38
   orig: 38, 38
   offset: 0, 0
   index: -1
 4yc4_8
-  rotate: true
-  xy: 659, 72
+  rotate: false
+  xy: 696, 53
   size: 38, 36
   orig: 38, 36
   offset: 0, 0
   index: -1
 4yc5_1
   rotate: false
-  xy: 143, 60
+  xy: 143, 59
   size: 69, 90
   orig: 69, 90
   offset: 0, 0
   index: -1
 4yc5_16
   rotate: false
-  xy: 0, 59
+  xy: 0, 58
   size: 69, 91
   orig: 69, 91
   offset: 0, 0
   index: -1
 4yc5_2
   rotate: false
-  xy: 214, 60
+  xy: 214, 59
   size: 69, 90
   orig: 69, 90
   offset: 0, 0
   index: -1
 4yc5_32
   rotate: false
-  xy: 71, 60
+  xy: 71, 59
   size: 70, 90
   orig: 70, 90
   offset: 0, 0
   index: -1
 4yc5_4
   rotate: false
-  xy: 285, 60
+  xy: 285, 59
   size: 69, 90
   orig: 69, 90
   offset: 0, 0
   index: -1
 4yc5_8
   rotate: false
-  xy: 356, 61
+  xy: 356, 60
   size: 69, 89
   orig: 69, 89
   offset: 0, 0
   index: -1
 yingzi
   rotate: true
-  xy: 465, 12
+  xy: 458, 11
   size: 64, 31
   orig: 64, 31
   offset: 0, 0

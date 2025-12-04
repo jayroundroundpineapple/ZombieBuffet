@@ -20,11 +20,20 @@ export default class bulletItem extends cc.Component {
     public init(plantType: number, level: number, startPos: cc.Vec3, targetPos: cc.Vec3) {
         this.plantType = plantType;
         this.level = level;
-        this.targetPos = targetPos;
+        this.targetPos = targetPos ? targetPos.clone() : null;
         this.isExploded = false;
         
         // 设置位置
-        this.node.setPosition(startPos);
+        if(startPos) {
+            this.node.setPosition(startPos);
+        } else {
+            console.error('子弹起始位置无效')
+            return
+        }
+        if(!this.targetPos) {
+            console.error('子弹目标位置无效')
+            return
+        }
         
         // 设置SkeletonData（根据植物type）
         this.setupSpineData();
@@ -34,6 +43,8 @@ export default class bulletItem extends cc.Component {
         
         // 播放初始动画
         this.playAnimation();
+        
+        console.log(`子弹初始化完成：类型=${plantType}, 等级=${level}, 位置=(${startPos.x.toFixed(0)}, ${startPos.y.toFixed(0)})`)
     }
     
     /**
@@ -49,7 +60,6 @@ export default class bulletItem extends cc.Component {
             spineComponent.skeletonData = this.spineDataArr[this.plantType];
         }
     }
-    
     /**
      * 设置皮肤（根据植物等级）
      */
@@ -59,14 +69,14 @@ export default class bulletItem extends cc.Component {
         const spineComponent = this.bulletSpine.getComponent(sp.Skeleton);
         if(!spineComponent) return;
         
-        const skinName = `${this.level}`;
+        const skinName = `level${this.level}`;
         try {
             spineComponent.setSkin(skinName);
         } catch(e) {
             console.log(`设置皮肤失败：${skinName}`, e);
             // 如果皮肤不存在，使用默认皮肤
             try {
-                spineComponent.setSkin('1');
+                spineComponent.setSkin('level1');
             } catch(e2) {
                 console.log('设置默认皮肤失败', e2);
             }
@@ -96,12 +106,12 @@ export default class bulletItem extends cc.Component {
         if(this.isExploded) return;
         
         this.isExploded = true;
-        this.playAnimation('explosion1');
+        this.playAnimation('explosion');
         
         // 监听爆炸动画完成
         if(callback) {
             try {
-                const spineComponent = this.bulletSpine.getComponent(sp.Skeleton);
+                const spineComponent = this.bulletSpine ? this.bulletSpine.getComponent(sp.Skeleton) : null;
                 if(spineComponent) {
                     spineComponent.setCompleteListener((entry) => {
                         if(entry && entry.animation && entry.animation.name === 'explosion') {
@@ -139,7 +149,7 @@ export default class bulletItem extends cc.Component {
      * 更新子弹移动
      */
     protected update(dt: number) {
-        if(!this.targetPos || this.isExploded) return;
+        if(!this.targetPos || this.isExploded || !this.node || !this.node.isValid) return;
         
         const currentPos = this.node.position;
         const direction = this.targetPos.sub(currentPos);

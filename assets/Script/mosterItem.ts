@@ -4,9 +4,11 @@ const { ccclass, property } = cc._decorator;
 export default class mosterItem extends cc.Component {
     @property(cc.Label)
     private hpLabel: cc.Label = null; //血条Label，在编辑器中设置
-    
+    @property(cc.Node)
+    private spineNode: cc.Node = null; //spine节点
     private currentHp: number = 0;
     private positionIndex: number = 0; //当前在mosterMapPosArr中的位置索引
+    private type: number = 1; //怪物类型
     
     /**
      * 设置血条数量
@@ -16,6 +18,10 @@ export default class mosterItem extends cc.Component {
         if(this.hpLabel) {
             this.hpLabel.string = hp.toString();
         }
+    }
+    public setType(type: number) {
+        this.type = 1;
+        this.spineNode.getComponent(sp.Skeleton).setSkin(`level${type}`);
     }
     /**
      * 获取当前血条
@@ -86,6 +92,16 @@ export default class mosterItem extends cc.Component {
             if(callback) {
                 callback();
             }
+        }
+    }
+    public playHurtAnimation() {
+        try {
+            const spineComponent = this.node.getComponentInChildren(sp.Skeleton);
+            if(spineComponent) {
+                spineComponent.setAnimation(0, 'hurt', false);
+            }
+        } catch(e) {
+            console.log('播放受伤动画失败', e);
         }
     }
     /**

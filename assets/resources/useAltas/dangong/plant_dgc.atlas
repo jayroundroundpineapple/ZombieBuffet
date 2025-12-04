@@ -1,82 +1,82 @@
 
 plant_dgc.png
-size: 559,149
+size: 565, 149
 format: RGBA8888
-filter: Linear,Linear
+filter: Linear, Linear
 repeat: none
 dgc1_16
   rotate: true
-  xy: 531, 111
+  xy: 386, 5
   size: 38, 28
   orig: 38, 28
   offset: 0, 0
   index: -1
 dgc1_2
   rotate: true
-  xy: 386, 5
+  xy: 416, 36
   size: 38, 28
   orig: 38, 28
   offset: 0, 0
   index: -1
 dgc1_4
   rotate: true
-  xy: 386, 5
+  xy: 416, 36
   size: 38, 28
   orig: 38, 28
   offset: 0, 0
   index: -1
 dgc1_32
   rotate: false
-  xy: 491, 91
+  xy: 416, 6
   size: 38, 28
   orig: 38, 28
   offset: 0, 0
   index: -1
 dgc1_8
-  rotate: false
-  xy: 491, 121
+  rotate: true
+  xy: 446, 36
   size: 38, 28
   orig: 38, 28
   offset: 0, 0
   index: -1
 dgc2_16
   rotate: true
-  xy: 326, 3
+  xy: 266, 3
   size: 40, 28
   orig: 40, 28
   offset: 0, 0
   index: -1
 dgc2_2
   rotate: true
-  xy: 266, 3
+  xy: 296, 3
   size: 40, 28
   orig: 40, 28
   offset: 0, 0
   index: -1
 dgc2_4
   rotate: true
-  xy: 266, 3
+  xy: 296, 3
   size: 40, 28
   orig: 40, 28
   offset: 0, 0
   index: -1
 dgc2_32
   rotate: true
-  xy: 356, 3
+  xy: 326, 3
   size: 40, 28
   orig: 40, 28
   offset: 0, 0
   index: -1
 dgc2_8
   rotate: true
-  xy: 296, 3
+  xy: 356, 3
   size: 40, 28
   orig: 40, 28
   offset: 0, 0
   index: -1
 dgc3_1
-  rotate: true
-  xy: 416, 88
+  rotate: false
+  xy: 416, 76
   size: 61, 73
   orig: 61, 73
   offset: 0, 0
@@ -117,127 +117,127 @@ dgc3_8
   offset: 0, 0
   index: -1
 dgc4_1
-  rotate: true
-  xy: 454, 27
+  rotate: false
+  xy: 511, 85
   size: 27, 30
   orig: 27, 30
   offset: 0, 0
   index: -1
 dgc4_16
   rotate: false
-  xy: 186, 1
+  xy: 66, 0
   size: 38, 42
   orig: 38, 42
   offset: 0, 0
   index: -1
 dgc4_2
   rotate: false
-  xy: 66, 0
+  xy: 106, 0
   size: 38, 42
   orig: 38, 42
   offset: 0, 0
   index: -1
 dgc4_32
   rotate: false
-  xy: 226, 1
+  xy: 146, 0
   size: 38, 42
   orig: 38, 42
   offset: 0, 0
   index: -1
 dgc4_4
   rotate: false
-  xy: 106, 0
+  xy: 186, 1
   size: 38, 42
   orig: 38, 42
   offset: 0, 0
   index: -1
 dgc4_8
   rotate: false
-  xy: 146, 0
+  xy: 226, 1
   size: 38, 42
   orig: 38, 42
   offset: 0, 0
   index: -1
 dgc5_1
-  rotate: false
-  xy: 454, 0
+  rotate: true
+  xy: 540, 86
   size: 29, 25
   orig: 29, 25
   offset: 0, 0
   index: -1
 dgc5_16
-  rotate: true
-  xy: 529, 35
+  rotate: false
+  xy: 456, 6
   size: 36, 28
   orig: 36, 28
   offset: 0, 0
   index: -1
 dgc5_2
   rotate: true
-  xy: 531, 73
+  xy: 476, 38
   size: 36, 28
   orig: 36, 28
   offset: 0, 0
   index: -1
 dgc5_4
   rotate: true
-  xy: 531, 73
+  xy: 476, 38
   size: 36, 28
   orig: 36, 28
   offset: 0, 0
   index: -1
 dgc5_32
-  rotate: false
-  xy: 416, 5
+  rotate: true
+  xy: 494, 0
   size: 36, 28
   orig: 36, 28
   offset: 0, 0
   index: -1
 dgc5_8
-  rotate: false
-  xy: 491, 61
+  rotate: true
+  xy: 479, 113
   size: 36, 28
   orig: 36, 28
   offset: 0, 0
   index: -1
 dgc6_1
-  rotate: false
-  xy: 486, 1
+  rotate: true
+  xy: 538, 54
   size: 29, 26
   orig: 29, 26
   offset: 0, 0
   index: -1
 dgc6_16
-  rotate: false
-  xy: 488, 29
+  rotate: true
+  xy: 479, 79
   size: 32, 30
   orig: 32, 30
   offset: 0, 0
   index: -1
 dgc6_2
-  rotate: false
-  xy: 454, 56
+  rotate: true
+  xy: 509, 117
   size: 32, 30
   orig: 32, 30
   offset: 0, 0
   index: -1
 dgc6_4
-  rotate: false
-  xy: 454, 56
+  rotate: true
+  xy: 509, 117
   size: 32, 30
   orig: 32, 30
   offset: 0, 0
   index: -1
 dgc6_32
   rotate: true
-  xy: 522, 1
+  xy: 506, 45
   size: 32, 30
   orig: 32, 30
   offset: 0, 0
   index: -1
 dgc6_8
-  rotate: false
-  xy: 416, 56
+  rotate: true
+  xy: 524, 11
   size: 32, 30
   orig: 32, 30
   offset: 0, 0
