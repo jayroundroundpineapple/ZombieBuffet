@@ -65,7 +65,29 @@ export default class mosterItem extends cc.Component {
             console.log('播放待机动画失败', e);
         }
     }
-    
+    public playDeadAnimation(callback?: () => void) {
+        try {
+            const spineComponent = this.node.getComponentInChildren(sp.Skeleton);
+            if(spineComponent) {
+                spineComponent.setAnimation(0, 'dead', false);
+                // 设置动画完成监听
+                if(callback) {
+                    spineComponent.setCompleteListener((entry) => {
+                        if(entry && entry.animation && entry.animation.name === 'dead') {
+                            callback();
+                            // 移除监听，避免重复调用
+                            spineComponent.setCompleteListener(null);
+                        }
+                    });
+                }
+            } 
+        } catch(e) {
+            console.log('播放死亡动画失败', e);
+            if(callback) {
+                callback();
+            }
+        }
+    }
     /**
      * 受到伤害
      */

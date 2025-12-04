@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "plant",
+    "_name": "bullet",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -23,141 +23,6 @@
     ],
     "_active": true,
     "_components": [
-      {
-        "__id__": 9
-      }
-    ],
-    "_prefab": {
-      "__id__": 10
-    },
-    "_opacity": 255,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 65.96759796142578,
-      "height": 95.45083618164062
-    },
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
-    },
-    "_trs": {
-      "__type__": "TypedArray",
-      "ctor": "Float64Array",
-      "array": [
-        312.96,
-        546.208,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1
-      ]
-    },
-    "_eulerAngles": {
-      "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "_skewX": 0,
-    "_skewY": 0,
-    "_is3DNode": false,
-    "_groupIndex": 0,
-    "groupIndex": 0,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.Node",
-    "_name": "plantSpine",
-    "_objFlags": 0,
-    "_parent": {
-      "__id__": 1
-    },
-    "_children": [
-      {
-        "__id__": 3
-      }
-    ],
-    "_active": true,
-    "_components": [
-      {
-        "__id__": 7
-      }
-    ],
-    "_prefab": {
-      "__id__": 8
-    },
-    "_opacity": 255,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 65.96759796142578,
-      "height": 95.45083618164062
-    },
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
-    },
-    "_trs": {
-      "__type__": "TypedArray",
-      "ctor": "Float64Array",
-      "array": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1
-      ]
-    },
-    "_eulerAngles": {
-      "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "_skewX": 0,
-    "_skewY": 0,
-    "_is3DNode": false,
-    "_groupIndex": 0,
-    "groupIndex": 0,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.Node",
-    "_name": "levelNum",
-    "_objFlags": 0,
-    "_parent": {
-      "__id__": 2
-    },
-    "_children": [],
-    "_active": true,
-    "_components": [
-      {
-        "__id__": 4
-      },
       {
         "__id__": 5
       }
@@ -175,8 +40,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 28.25,
-      "height": 56.4
+      "width": 66.73174285888672,
+      "height": 64.90155029296875
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -187,8 +52,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        0,
-        -36,
+        -553,
+        99,
         0,
         0,
         0,
@@ -213,66 +78,68 @@
     "_id": ""
   },
   {
-    "__type__": "cc.Label",
-    "_name": "",
+    "__type__": "cc.Node",
+    "_name": "bulletSpine",
     "_objFlags": 0,
-    "node": {
-      "__id__": 3
-    },
-    "_enabled": true,
-    "_materials": [
-      {
-        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
-      }
-    ],
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
-    "_string": "3",
-    "_N$string": "3",
-    "_fontSize": 40,
-    "_lineHeight": 40,
-    "_enableWrapText": true,
-    "_N$file": null,
-    "_isSystemFontUsed": true,
-    "_spacingX": 0,
-    "_batchAsBitmap": false,
-    "_styleFlags": 0,
-    "_underlineHeight": 0,
-    "_N$horizontalAlign": 1,
-    "_N$verticalAlign": 1,
-    "_N$fontFamily": "Arial",
-    "_N$overflow": 0,
-    "_N$cacheMode": 0,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.LabelOutline",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 3
-    },
-    "_enabled": true,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 133,
-      "g": 15,
-      "b": 15,
-      "a": 255
-    },
-    "_width": 3,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.PrefabInfo",
-    "root": {
+    "_parent": {
       "__id__": 1
     },
-    "asset": {
-      "__id__": 0
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 3
+      }
+    ],
+    "_prefab": {
+      "__id__": 4
     },
-    "fileId": "f3f0BALalPX5Qb4Y3z5WJS",
-    "sync": false
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 63.52088928222656,
+      "height": 60.58534622192383
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float64Array",
+      "array": [
+        553,
+        -99,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "_eulerAngles": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_is3DNode": false,
+    "_groupIndex": 0,
+    "groupIndex": 0,
+    "_id": ""
   },
   {
     "__type__": "sp.Skeleton",
@@ -289,7 +156,7 @@
     ],
     "paused": false,
     "defaultSkin": "1",
-    "defaultAnimation": "idle",
+    "defaultAnimation": "animation",
     "_preCacheMode": 0,
     "_cacheMode": 0,
     "loop": true,
@@ -300,13 +167,13 @@
     "_frameCache": null,
     "_curFrame": null,
     "_skeletonCache": null,
-    "_animationName": "idle",
+    "_animationName": "animation",
     "_animationQueue": [],
     "_headAniInfo": null,
     "_playTimes": 0,
     "_isAniComplete": true,
     "_N$skeletonData": {
-      "__uuid__": "d2e62a70-999a-483f-a313-4ccbfa91d05e"
+      "__uuid__": "897e0abe-7d2f-406e-b439-41fa4e82fb69"
     },
     "_N$_defaultCacheMode": 0,
     "_N$debugSlots": false,
@@ -324,33 +191,27 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "abXIMDvLpPkah+adAyZJE9",
+    "fileId": "37g7zx/qFGHpVzjx0QrQND",
     "sync": false
   },
   {
-    "__type__": "d5216kYtDtLCoGEY4xXEYp2",
+    "__type__": "308e6AkaPtEJqajPHKd/rFw",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
     },
     "_enabled": true,
-    "levelLb": {
-      "__id__": 4
-    },
     "spineDataArr": [
       {
-        "__uuid__": "174c12d7-0cb3-496c-a08a-ac3b6f8459e9"
+        "__uuid__": "6f7d6ab6-1162-4bf4-90fc-4000d46371cb"
       },
       {
-        "__uuid__": "d2e62a70-999a-483f-a313-4ccbfa91d05e"
+        "__uuid__": "897e0abe-7d2f-406e-b439-41fa4e82fb69"
       }
     ],
-    "spineNode": {
+    "bulletSpine": {
       "__id__": 2
-    },
-    "bulletPre": {
-      "__uuid__": "2918314c-1323-442c-8b6e-0c4f52c1aa7f"
     },
     "_id": ""
   },

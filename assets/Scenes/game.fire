@@ -1454,7 +1454,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "bottom",
+    "_name": "platBottomBox",
     "_objFlags": 0,
     "_parent": {
       "__id__": 28
@@ -2806,13 +2806,21 @@
       "__id__": 2
     },
     "_enabled": true,
+    "bottomPlantBox": {
+      "__id__": 33
+    },
     "mapNode": {
       "__id__": 29
     },
     "mosterPre": {
       "__uuid__": "a24e7d75-782a-4537-a7b1-a2df9150eb55"
     },
-    "plantPre": null,
+    "plantPre": {
+      "__uuid__": "7c30f3a9-777e-4cbb-a163-d486877af7ce"
+    },
+    "bulletPre": {
+      "__uuid__": "2918314c-1323-442c-8b6e-0c4f52c1aa7f"
+    },
     "finger": {
       "__id__": 43
     },

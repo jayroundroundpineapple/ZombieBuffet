@@ -4,10 +4,14 @@ const { ccclass, property } = cc._decorator;
 export default class plantItem extends cc.Component {
     @property(cc.Label)
     private levelLb:cc.Label = null; //等级Label
-    
-    @property
+    @property(sp.SkeletonData)
+    private spineDataArr:sp.SkeletonData[] = []; // spine动画
+    @property(cc.Node)
+    private spineNode:cc.Node = null
+    @property(cc.Prefab)
+    private bulletPre:cc.Prefab = null; //子弹预制体
+
     private plantType: number = 0; //植物种类
-    
     private level: number = 1; //植物等级
     private positionIndex: number = 0; //当前在mosterMapPosArr中的位置索引
     private attackTimer: number = 0; //攻击计时器
@@ -34,6 +38,7 @@ export default class plantItem extends cc.Component {
      */
     public setType(type: number) {
         this.plantType = type;
+        // this.spineNode.getComponent(sp.Skeleton).skeletonData = this.spineDataArr[type];
     }
     
     /**
@@ -177,6 +182,20 @@ export default class plantItem extends cc.Component {
         } catch(e) {
             console.log('播放攻击动画失败', e);
         }
+    }
+    
+    /**
+     * 获取植物类型
+     */
+    public getPlantType(): number {
+        return this.plantType;
+    }
+    
+    /**
+     * 获取植物位置
+     */
+    public getPlantPosition(): cc.Vec3 {
+        return this.node.position;
     }
     
     /**

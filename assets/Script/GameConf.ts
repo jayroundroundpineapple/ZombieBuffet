@@ -7,7 +7,7 @@ export const enum MosterType{
     moster1 = 0,
     moster2 = 1
 }
-export const enum heroType{
+export const enum plantType{
     cao = 0, //四叶草
     dangong = 1 //弹弓
 }
@@ -32,8 +32,8 @@ export class GameConf{
     /**plant地图的5个格子按顺序的位置 */
     public static plantMapPosArr:cc.Vec3[] = [
         cc.v3(-53,-109, 0),
-        cc.v3(-53,-225, 0),
-        cc.v3(165, -109, 0)
+        cc.v3(165, -109, 0),
+        cc.v3(-53,-225, 0)
     ]
 }
 
