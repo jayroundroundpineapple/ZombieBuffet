@@ -8,14 +8,14 @@ export const enum MosterType{
     moster2 = 1
 }
 export const enum heroType{
-    hero1 = 0,
-    hero2 = 1
+    cao = 0, //四叶草
+    dangong = 1 //弹弓
 }
 export class GameConf{
     public static floorPosY = 35
 
-    /**地图的11个格子按顺序的位置 */
-    public static floorPosArr:cc.Vec3[] = [
+    /**moster地图的11个格子按顺序的位置 */
+    public static mosterMapPosArr:cc.Vec3[] = [
         cc.v3(-268,335, 0),
         cc.v3(-160,335, 0),
         cc.v3(-50, 335, 0),  
@@ -27,6 +27,13 @@ export class GameConf{
         cc.v3(60, -210, 0),  
         cc.v3(60, -320, 0),  
         cc.v3(60, -430, 0), 
+    ]
+
+    /**plant地图的5个格子按顺序的位置 */
+    public static plantMapPosArr:cc.Vec3[] = [
+        cc.v3(-53,-109, 0),
+        cc.v3(-53,-225, 0),
+        cc.v3(165, -109, 0)
     ]
 }
 

@@ -11,12 +11,20 @@ import NotifyEffect from "./utils/NotifyEffect";
 import Utils from "./utils/Utils";
 import { GameConf } from "./GameConf";
 import mosterItem from "./mosterItem";
+import plantItem from "./plantItem";
 
 /**怪物数据接口 */
 interface MonsterData {
     node: cc.Node
     mosterItem: mosterItem
-    positionIndex: number //当前在floorPosArr中的位置索引
+    positionIndex: number //当前在mosterMapPosArr中的位置索引
+}
+
+/**植物数据接口 */
+interface PlantData {
+    node: cc.Node
+    plantItem: plantItem
+    positionIndex: number //当前在plantMapPosArr中的位置索引
 }
 
 
@@ -28,6 +36,8 @@ export default class GameUI extends cc.Component {
     private mapNode:cc.Node = null; //地图
     @property(cc.Prefab)
     private mosterPre:cc.Prefab = null
+    @property(cc.Prefab)
+    private plantPre:cc.Prefab = null //植物预制体
     @property(cc.Node)
     private finger:cc.Node = null;
     @property(cc.Node)
@@ -46,6 +56,8 @@ export default class GameUI extends cc.Component {
     private canPlayMusic:boolean = false
     private gameModel: GameModel = null
     private monsters: MonsterData[] = [] //怪物数组
+    private plants: PlantData[] = [] //植物数组
+    private dragStartPlant: PlantData = null //拖拽开始的植物
     protected onLoad(): void {
         this.gameModel = new GameModel()
         this.gameModel.mGame = this
@@ -80,7 +92,7 @@ export default class GameUI extends cc.Component {
         this.monsters = []
         
         // 创建三个怪物，血条分别为11/8/12
-        const hpList = [11, 8, 12]
+        const hpList = [12, 8, 11]
         // 初始位置索引：最后一只在索引0(-268)，第二只在索引1(-160)，第一只在索引2(-50)
         const initialPosIndexes = [0, 1, 2]
         
@@ -101,7 +113,7 @@ export default class GameUI extends cc.Component {
             monsterItemComponent.setPositionIndex(posIndex)
             
             // 设置初始位置
-            monsterNode.setPosition(GameConf.floorPosArr[posIndex])
+            monsterNode.setPosition(GameConf.mosterMapPosArr[posIndex])
             
             // 创建怪物数据
             const monsterData: MonsterData = {
@@ -116,11 +128,14 @@ export default class GameUI extends cc.Component {
     
     /**移动按钮点击事件 */
     private onMoveButtonClick(){
+        // 首先执行植物攻击（所有植物集火攻击最前面的怪物）
+        this.performAllPlantsAttack()
+        
         if(this.monsters.length === 0) return
         
         // 检查是否所有怪物都到达最后一个位置
         const allReachedEnd = this.monsters.every(monster => 
-            monster.positionIndex >= GameConf.floorPosArr.length - 1
+            monster.positionIndex >= GameConf.mosterMapPosArr.length - 1
         )
         
         if(allReachedEnd){
@@ -132,10 +147,10 @@ export default class GameUI extends cc.Component {
         
         // 所有怪物同时往前走一步
         this.monsters.forEach(monster => {
-            if(monster.positionIndex < GameConf.floorPosArr.length - 1){
+            if(monster.positionIndex < GameConf.mosterMapPosArr.length - 1){
                 monster.positionIndex++
                 monster.mosterItem.setPositionIndex(monster.positionIndex)
-                const targetPos = GameConf.floorPosArr[monster.positionIndex]
+                const targetPos = GameConf.mosterMapPosArr[monster.positionIndex]
                 
                 // 播放移动动画
                 monster.mosterItem.playWalkAnimation()
@@ -150,6 +165,181 @@ export default class GameUI extends cc.Component {
                     .start()
             }
         })
+    }
+    
+    /**
+     * 执行所有植物攻击（集火攻击最前面的怪物）
+     */
+    private performAllPlantsAttack() {
+        if(this.plants.length === 0 || this.monsters.length === 0) return
+        
+        // 计算所有植物的总攻击力
+        let totalDamage = 0
+        this.plants.forEach(plant => {
+            if(plant.node && plant.node.isValid) {
+                totalDamage += plant.plantItem.getAttackPower()
+                // 播放攻击动画
+                plant.plantItem.playAttackAnimation()
+                // 攻击动画结束后恢复待机
+                plant.plantItem.scheduleOnce(() => {
+                    plant.plantItem.playIdleAnimation()
+                }, 0.5)
+            }
+        })
+        
+        if(totalDamage <= 0) return
+        
+        // 处理伤害溢出：持续攻击最前面的怪物，直到伤害全部消耗或没有怪物
+        let remainingDamage = totalDamage
+        
+        while(remainingDamage > 0 && this.monsters.length > 0) {
+            // 每次重新找到最前面的怪物（positionIndex最大的）
+            let frontMonster: MonsterData = null
+            let maxIndex = -1
+            
+            this.monsters.forEach(monster => {
+                if(monster.node && monster.node.isValid && monster.positionIndex > maxIndex) {
+                    maxIndex = monster.positionIndex
+                    frontMonster = monster
+                }
+            })
+            
+            if(!frontMonster) break
+            
+            const monsterHp = frontMonster.mosterItem.getHp()
+            const damageToDeal = Math.min(remainingDamage, monsterHp)
+            
+            // 造成伤害
+            const isDead = frontMonster.mosterItem.takeDamage(damageToDeal)
+            remainingDamage -= damageToDeal
+            
+            if(isDead) {
+                // 怪物死亡，移除
+                this.removeMonster(frontMonster.node)
+                // 继续循环，攻击下一个最前面的怪物
+            } else {
+                // 怪物没死，伤害已全部消耗
+                break
+            }
+        }
+    }
+    
+    /**
+     * 创建植物
+     */
+    public createPlant(type: number, level: number, positionIndex: number): PlantData | null {
+        if(!this.plantPre) {
+            console.error('植物预制体未设置')
+            return null
+        }
+        
+        // 检查位置索引是否有效
+        if(positionIndex < 0 || positionIndex >= GameConf.plantMapPosArr.length) {
+            console.error(`植物位置索引超出范围：${positionIndex}，有效范围：0-${GameConf.plantMapPosArr.length - 1}`)
+            return null
+        }
+        
+        const plantNode = cc.instantiate(this.plantPre)
+        plantNode.parent = this.mapNode
+        
+        const plantItemComponent = plantNode.getComponent(plantItem)
+        if(!plantItemComponent){
+            console.error('预制体上未找到plantItem组件，请确保已挂载plantItem脚本')
+            plantNode.destroy()
+            return null
+        }
+        
+        // 设置植物属性
+        plantItemComponent.setType(type)
+        plantItemComponent.setLevel(level)
+        plantItemComponent.setPositionIndex(positionIndex)
+        
+        // 设置位置（使用plantMapPosArr）
+        plantNode.setPosition(GameConf.plantMapPosArr[positionIndex])
+        
+        const plantData: PlantData = {
+            node: plantNode,
+            plantItem: plantItemComponent,
+            positionIndex: positionIndex
+        }
+        
+        this.plants.push(plantData)
+        
+        // 添加拖拽事件
+        this.setupPlantDrag(plantData)
+        
+        return plantData
+    }
+    
+    /**
+     * 设置植物拖拽事件
+     */
+    private setupPlantDrag(plantData: PlantData) {
+        plantData.node.on(cc.Node.EventType.TOUCH_START, (event: cc.Event.EventTouch) => {
+            this.dragStartPlant = plantData
+            event.stopPropagation()
+        }, plantData.node)
+        
+        plantData.node.on(cc.Node.EventType.TOUCH_END, (event: cc.Event.EventTouch) => {
+            if(!this.dragStartPlant || this.dragStartPlant !== plantData) return
+            
+            // 检查是否拖到另一个植物上
+            // 直接检查所有植物，找到距离最近的
+            let minDistance = Infinity
+            let targetPlant: PlantData = null
+            
+            this.plants.forEach(plant => {
+                if(plant === plantData) return // 跳过自己
+                
+                // 计算两个植物节点之间的距离
+                const distance = plant.node.position.sub(plantData.node.position).mag()
+                if(distance < 150 && distance < minDistance) { // 150像素范围内
+                    minDistance = distance
+                    targetPlant = plant
+                }
+            })
+            
+            if(targetPlant && plantData.plantItem.canMergeWith(targetPlant.plantItem)) {
+                // 可以合成
+                this.mergePlants(plantData, targetPlant)
+            }
+            
+            this.dragStartPlant = null
+            event.stopPropagation()
+        }, plantData.node)
+    }
+    
+    /**
+     * 合成两个植物
+     */
+    private mergePlants(plant1: PlantData, plant2: PlantData) {
+        // 将plant2的等级加到plant1上
+        const newLevel = plant1.plantItem.getLevel() + plant2.plantItem.getLevel()
+        plant1.plantItem.setLevel(newLevel)
+        
+        // 销毁plant2
+        const index = this.plants.indexOf(plant2)
+        if(index > -1) {
+            this.plants.splice(index, 1)
+        }
+        plant2.node.destroy()
+        
+        console.log(`植物合成成功，新等级：${newLevel}`)
+    }
+    
+    
+    /**
+     * 移除怪物
+     */
+    private removeMonster(monsterNode: cc.Node) {
+        const index = this.monsters.findIndex(m => m.node === monsterNode)
+        if(index > -1) {
+            const monster = this.monsters[index]
+            this.monsters.splice(index, 1)
+            if(monster.node && monster.node.isValid) {
+                monster.node.destroy()
+            }
+        }
     }
     
     /**游戏结束 */

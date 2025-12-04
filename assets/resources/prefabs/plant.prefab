@@ -13,15 +13,12 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "monster0",
+    "_name": "plant",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
       {
         "__id__": 2
-      },
-      {
-        "__id__": 5
       }
     ],
     "_active": true,
@@ -43,8 +40,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 105.04002380371094,
-      "height": 150.9182891845703
+      "width": 65.96759796142578,
+      "height": 95.45083618164062
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -55,8 +52,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        60,
-        -430,
+        312.96,
+        546.208,
         0,
         0,
         0,
@@ -82,20 +79,24 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "mosterSpine",
+    "_name": "plantSpine",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
     },
-    "_children": [],
-    "_active": true,
-    "_components": [
+    "_children": [
       {
         "__id__": 3
       }
     ],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 7
+      }
+    ],
     "_prefab": {
-      "__id__": 4
+      "__id__": 8
     },
     "_opacity": 255,
     "_color": {
@@ -107,8 +108,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 105.04002380371094,
-      "height": 150.9182891845703
+      "width": 65.96759796142578,
+      "height": 95.45083618164062
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -145,77 +146,24 @@
     "_id": ""
   },
   {
-    "__type__": "sp.Skeleton",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 2
-    },
-    "_enabled": true,
-    "_materials": [
-      {
-        "__uuid__": "7afd064b-113f-480e-b793-8817d19f63c3"
-      }
-    ],
-    "paused": false,
-    "defaultSkin": 4,
-    "defaultAnimation": "idle",
-    "_preCacheMode": 0,
-    "_cacheMode": 0,
-    "loop": false,
-    "premultipliedAlpha": true,
-    "timeScale": 1,
-    "_accTime": 0,
-    "_playCount": 0,
-    "_frameCache": null,
-    "_curFrame": null,
-    "_skeletonCache": null,
-    "_animationName": "idle",
-    "_animationQueue": [],
-    "_headAniInfo": null,
-    "_playTimes": 1,
-    "_isAniComplete": true,
-    "_N$skeletonData": {
-      "__uuid__": "92fc8556-d943-4b02-8b4a-f0f4bbad2296"
-    },
-    "_N$_defaultCacheMode": 0,
-    "_N$debugSlots": false,
-    "_N$debugBones": false,
-    "_N$debugMesh": false,
-    "_N$useTint": false,
-    "_N$enableBatch": false,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.PrefabInfo",
-    "root": {
-      "__id__": 1
-    },
-    "asset": {
-      "__id__": 0
-    },
-    "fileId": "2aT5ZtzTJBIpST4ookKQ/q",
-    "sync": false
-  },
-  {
     "__type__": "cc.Node",
-    "_name": "hpLb",
+    "_name": "levelNum",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 1
+      "__id__": 2
     },
     "_children": [],
     "_active": true,
     "_components": [
       {
-        "__id__": 6
+        "__id__": 4
       },
       {
-        "__id__": 7
+        "__id__": 5
       }
     ],
     "_prefab": {
-      "__id__": 8
+      "__id__": 6
     },
     "_opacity": 255,
     "_color": {
@@ -240,7 +188,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -30,
+        -36,
         0,
         0,
         0,
@@ -269,7 +217,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 5
+      "__id__": 3
     },
     "_enabled": true,
     "_materials": [
@@ -279,8 +227,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "5",
-    "_N$string": "5",
+    "_string": "3",
+    "_N$string": "3",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": true,
@@ -302,14 +250,14 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 5
+      "__id__": 3
     },
     "_enabled": true,
     "_color": {
       "__type__": "cc.Color",
-      "r": 88,
-      "g": 8,
-      "b": 8,
+      "r": 133,
+      "g": 15,
+      "b": 15,
       "a": 255
     },
     "_width": 3,
@@ -323,20 +271,72 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "32wNczRuRHP5ZdgLSJPfhH",
+    "fileId": "f3f0BALalPX5Qb4Y3z5WJS",
     "sync": false
   },
   {
-    "__type__": "6d587ve/xdEhLcbuN5IBjDt",
+    "__type__": "sp.Skeleton",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 2
+    },
+    "_enabled": true,
+    "_materials": [
+      {
+        "__uuid__": "7afd064b-113f-480e-b793-8817d19f63c3"
+      }
+    ],
+    "paused": false,
+    "defaultSkin": "1",
+    "defaultAnimation": "idle",
+    "_preCacheMode": 0,
+    "_cacheMode": 0,
+    "loop": true,
+    "premultipliedAlpha": true,
+    "timeScale": 1,
+    "_accTime": 0,
+    "_playCount": 0,
+    "_frameCache": null,
+    "_curFrame": null,
+    "_skeletonCache": null,
+    "_animationName": "idle",
+    "_animationQueue": [],
+    "_headAniInfo": null,
+    "_playTimes": 0,
+    "_isAniComplete": true,
+    "_N$skeletonData": {
+      "__uuid__": "d2e62a70-999a-483f-a313-4ccbfa91d05e"
+    },
+    "_N$_defaultCacheMode": 0,
+    "_N$debugSlots": false,
+    "_N$debugBones": false,
+    "_N$debugMesh": false,
+    "_N$useTint": false,
+    "_N$enableBatch": false,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__id__": 0
+    },
+    "fileId": "abXIMDvLpPkah+adAyZJE9",
+    "sync": false
+  },
+  {
+    "__type__": "d5216kYtDtLCoGEY4xXEYp2",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
     },
     "_enabled": true,
-    "hpLabel": {
-      "__id__": 6
-    },
+    "levelLb": null,
+    "plantType": 0,
     "_id": ""
   },
   {

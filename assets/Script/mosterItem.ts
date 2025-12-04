@@ -6,7 +6,7 @@ export default class mosterItem extends cc.Component {
     private hpLabel: cc.Label = null; //血条Label，在编辑器中设置
     
     private currentHp: number = 0;
-    private positionIndex: number = 0; //当前在floorPosArr中的位置索引
+    private positionIndex: number = 0; //当前在mosterMapPosArr中的位置索引
     
     /**
      * 设置血条数量
@@ -64,6 +64,28 @@ export default class mosterItem extends cc.Component {
         } catch(e) {
             console.log('播放待机动画失败', e);
         }
+    }
+    
+    /**
+     * 受到伤害
+     */
+    public takeDamage(damage: number): boolean {
+        if(damage <= 0) return false;
+        const newHp = this.currentHp - damage;
+        if(newHp <= 0) {
+            this.setHp(0);
+            return true; // 返回true表示怪物已死亡
+        } else {
+            this.setHp(newHp);
+            return false; // 返回false表示怪物还活着
+        }
+    }
+    
+    /**
+     * 检查是否死亡
+     */
+    public isDead(): boolean {
+        return this.currentHp <= 0;
     }
 }
 
