@@ -1,0 +1,20 @@
+
+bullet_jcg.png
+size: 850,478
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+jcg/q_1
+  rotate: false
+  xy: 481, 109
+  size: 369, 369
+  orig: 369, 369
+  offset: 0, 0
+  index: -1
+jcg/q_l
+  rotate: false
+  xy: 0, 0
+  size: 479, 478
+  orig: 479, 478
+  offset: 0, 0
+  index: -1

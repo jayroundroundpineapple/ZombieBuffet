@@ -1,0 +1,41 @@
+
+shovel.png
+size: 718,120
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+cz
+  rotate: false
+  xy: 0, 30
+  size: 170, 90
+  orig: 170, 90
+  offset: 0, 0
+  index: -1
+cz/1_000
+  rotate: false
+  xy: 172, 0
+  size: 135, 120
+  orig: 135, 120
+  offset: 0, 0
+  index: -1
+cz/1_001
+  rotate: false
+  xy: 309, 0
+  size: 135, 120
+  orig: 135, 120
+  offset: 0, 0
+  index: -1
+cz/1_002
+  rotate: false
+  xy: 446, 0
+  size: 135, 120
+  orig: 135, 120
+  offset: 0, 0
+  index: -1
+cz/1_003
+  rotate: false
+  xy: 583, 0
+  size: 135, 120
+  orig: 135, 120
+  offset: 0, 0
+  index: -1

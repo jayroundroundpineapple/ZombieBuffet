@@ -1,0 +1,20 @@
+
+fx_appear.png
+size: 170,56
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+yw/4
+  rotate: false
+  xy: 0, 0
+  size: 150, 56
+  orig: 150, 56
+  offset: 0, 0
+  index: -1
+yz2
+  rotate: true
+  xy: 152, 34
+  size: 22, 18
+  orig: 22, 18
+  offset: 0, 0
+  index: -1
