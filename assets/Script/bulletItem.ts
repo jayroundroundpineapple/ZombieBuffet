@@ -1,4 +1,5 @@
 import mosterItem from "./mosterItem";
+import RESSpriteFrame from "./RESSpriteFrame";
 
 const { ccclass, property } = cc._decorator;
 
@@ -73,7 +74,7 @@ export default class bulletItem extends cc.Component {
      */
     private playAnimation(animName: string = 'animation') {
         if(!this.bulletSpine) return;
-        
+        cc.audioEngine.play(RESSpriteFrame.instance.shootAudioClip,false,1)
         try {
             const spineComponent = this.bulletSpine.getComponent(sp.Skeleton);
             if(spineComponent) {

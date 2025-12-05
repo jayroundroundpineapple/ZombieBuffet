@@ -78,7 +78,7 @@ export default class GameUI extends cc.Component {
         })
         cc.find('Canvas').on('touchstart', () => {
             this.canPlayMusic = true
-            this.bgmAudioFlag && cc.audioEngine.play(RESSpriteFrame.instance.bgmAudioClip, false, 1)
+            this.bgmAudioFlag && cc.audioEngine.play(RESSpriteFrame.instance.bgmAudioClip, true, 1)
             this.bgmAudioFlag = false
         })
         this.resize()
@@ -365,7 +365,7 @@ export default class GameUI extends cc.Component {
     }
     showResultUI() {
         NotifyEffect.NormalShowUI(this.resultNode, RESSpriteFrame.instance.comeOutAudioClip, 0, true, () => {
-
+            cc.audioEngine.play(RESSpriteFrame.instance.cherrUpAudioClip,false,1)
         })
     }
     /**
@@ -644,6 +644,8 @@ export default class GameUI extends cc.Component {
 
         plantData.node.on(cc.Node.EventType.TOUCH_START, (event: cc.Event.EventTouch) => {
             // 检查是否可点击
+            this.bgmAudioFlag && cc.audioEngine.play(RESSpriteFrame.instance.bgmAudioClip, true, 1)
+            this.bgmAudioFlag = false
             if (!plantData.isClickable) {
                 event.stopPropagation()
                 return
