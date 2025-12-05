@@ -19,6 +19,7 @@ interface PlantData {
     plantItem: plantItem
     positionIndex: number //当前在plantMapPosArr中的位置索引
     targetMapPlantIndex?: number //指定的合成目标（地图植物的位置索引），-1表示无指定目标
+    isClickable: boolean //是否可点击（用于引导系统）
 }
 
 
@@ -87,9 +88,10 @@ export default class GameUI extends cc.Component {
         this.initBottomPlantBox()
         //创建地图上一开始有的植物
         // targetMapPlantIndex: 指定要合成的地图植物位置索引，-1表示无指定目标
-        this.createPlant(plantType.cao, 2, 0, -1)
-        this.createPlant(plantType.cao, 2, 1, 0)
-        this.createPlant(plantType.dangong, 1, 2, -1)
+        // isClickable: 是否可点击（用于引导系统）
+        this.createPlant(plantType.cao, 2, 0, -1, false) // 第一个植物不可点击
+        this.createPlant(plantType.cao, 2, 1, 0, false) // 第二个植物不可点击
+        this.createPlant(plantType.dangong, 1, 2, -1, false) // 第三个植物不可点击
         // 清空之前的怪物
         this.monsters.forEach(monster => {
             if(monster.node && monster.node.isValid){
@@ -147,21 +149,22 @@ export default class GameUI extends cc.Component {
         
         // 创建3只植物：level=1的dangong, level=2的dangong, level=4的cao
         // targetMapPlantIndex: 指定要合成的地图植物位置索引，-1表示无指定目标
+        // isClickable: 是否可点击（用于引导系统）
         const plantConfigs = [
-            { type: plantType.dangong, level: 1, x: -218, y: 30, targetMapPlantIndex: 2 },
-            { type: plantType.dangong, level: 2, x: -88, y: 30, targetMapPlantIndex: 2 }, // 指定与地图位置2的植物合成
-            { type: plantType.cao, level: 4, x: 45, y: 30, targetMapPlantIndex: 0 }
+            { type: plantType.dangong, level: 1, x: -218, y: 30, targetMapPlantIndex: 2, isClickable: true }, // 第一个可点击
+            { type: plantType.dangong, level: 2, x: -88, y: 30, targetMapPlantIndex: 2, isClickable: false }, // 第二个不可点击（等待第一个点击后手动启用）
+            { type: plantType.cao, level: 4, x: 45, y: 30, targetMapPlantIndex: 0, isClickable: false } // 第三个不可点击
         ]
         
         plantConfigs.forEach(config => {
-            this.createPlantInBox(config.type, config.level, config.x, config.y, config.targetMapPlantIndex)
+            this.createPlantInBox(config.type, config.level, config.x, config.y, config.targetMapPlantIndex, config.isClickable)
         })
     }
     
     /**
      * 在底部植物盒子中创建植物
      */
-    private createPlantInBox(type: number, level: number, x: number, y: number, targetMapPlantIndex: number = -1): PlantData | null {
+    private createPlantInBox(type: number, level: number, x: number, y: number, targetMapPlantIndex: number = -1, isClickable: boolean = true): PlantData | null {
         if(!this.plantPre) {
             console.error('植物预制体未设置')
             return null
@@ -190,13 +193,17 @@ export default class GameUI extends cc.Component {
             node: plantNode,
             plantItem: plantItemComponent,
             positionIndex: -1, // 底部盒子的植物positionIndex为-1
-            targetMapPlantIndex: targetMapPlantIndex // 指定的合成目标
+            targetMapPlantIndex: targetMapPlantIndex, // 指定的合成目标
+            isClickable: isClickable // 是否可点击
         }
         
         this.plants.push(plantData)
         
         // 添加拖拽事件（支持拖到地图或合成）
         this.setupPlantDragFromBox(plantData)
+        
+        // 根据isClickable设置节点的交互性
+        this.updatePlantClickable(plantData)
         
         return plantData
     }
@@ -411,7 +418,7 @@ export default class GameUI extends cc.Component {
     /**
      * 创建植物
      */
-    public createPlant(type: number, level: number, positionIndex: number, targetMapPlantIndex: number = -1): PlantData | null {
+    public createPlant(type: number, level: number, positionIndex: number, targetMapPlantIndex: number = -1, isClickable: boolean = true): PlantData | null {
         if(!this.plantPre) {
             console.error('植物预制体未设置')
             return null
@@ -445,13 +452,17 @@ export default class GameUI extends cc.Component {
             node: plantNode,
             plantItem: plantItemComponent,
             positionIndex: positionIndex,
-            targetMapPlantIndex: targetMapPlantIndex // 指定的合成目标
+            targetMapPlantIndex: targetMapPlantIndex, // 指定的合成目标
+            isClickable: isClickable // 是否可点击
         }
         
         this.plants.push(plantData)
         
         // 添加拖拽事件
         this.setupPlantDrag(plantData)
+        
+        // 根据isClickable设置节点的交互性
+        this.updatePlantClickable(plantData)
         
         return plantData
     }
@@ -463,6 +474,12 @@ export default class GameUI extends cc.Component {
         let startPos: cc.Vec3 = null
         
         plantData.node.on(cc.Node.EventType.TOUCH_START, (event: cc.Event.EventTouch) => {
+            // 检查是否可点击
+            if(!plantData.isClickable) {
+                event.stopPropagation()
+                return
+            }
+            
             this.dragStartPlant = plantData
             startPos = plantData.node.position.clone()
             event.stopPropagation()
@@ -567,6 +584,12 @@ export default class GameUI extends cc.Component {
         let startPos: cc.Vec3 = null
         
         plantData.node.on(cc.Node.EventType.TOUCH_START, (event: cc.Event.EventTouch) => {
+            // 检查是否可点击
+            if(!plantData.isClickable) {
+                event.stopPropagation()
+                return
+            }
+            
             this.dragStartPlant = plantData
             startPos = plantData.node.position.clone()
             event.stopPropagation()
@@ -819,5 +842,73 @@ export default class GameUI extends cc.Component {
         if(this.moveButton){
             this.moveButton.node.off('click', this.onMoveButtonClick, this)
         }
+    }
+    
+    /**
+     * 设置植物是否可点击（用于引导系统）
+     * @param plantData 植物数据
+     * @param isClickable 是否可点击
+     */
+    public setPlantClickable(plantData: PlantData, isClickable: boolean) {
+        if(!plantData) return
+        plantData.isClickable = isClickable
+        this.updatePlantClickable(plantData)
+    }
+    
+    /**
+     * 根据位置索引设置植物是否可点击
+     * @param positionIndex 植物位置索引（-1表示底部盒子，>=0表示地图位置）
+     * @param isClickable 是否可点击
+     */
+    public setPlantClickableByIndex(positionIndex: number, isClickable: boolean) {
+        const plantData = this.plants.find(p => p.positionIndex === positionIndex)
+        if(plantData) {
+            this.setPlantClickable(plantData, isClickable)
+        } else {
+            console.warn(`未找到位置索引为${positionIndex}的植物`)
+        }
+    }
+    
+    /**
+     * 根据节点设置植物是否可点击
+     * @param plantNode 植物节点
+     * @param isClickable 是否可点击
+     */
+    public setPlantClickableByNode(plantNode: cc.Node, isClickable: boolean) {
+        const plantData = this.plants.find(p => p.node === plantNode)
+        if(plantData) {
+            this.setPlantClickable(plantData, isClickable)
+        } else {
+            console.warn('未找到对应的植物数据')
+        }
+    }
+    
+    /**
+     * 更新植物的可点击状态（更新节点的交互性）
+     */
+    private updatePlantClickable(plantData: PlantData) {
+        if(!plantData || !plantData.node || !plantData.node.isValid) return
+        
+        // 设置节点的交互性
+        // 可以通过设置节点的opacity或者添加一个遮罩层来实现视觉反馈
+        if(plantData.isClickable) {
+            // 可点击：恢复正常透明度
+            plantData.node.opacity = 255
+            // 移除遮罩效果（如果有）
+            const maskComponent = plantData.node.getComponent(cc.Mask)
+            if(maskComponent) {
+                maskComponent.enabled = false
+            }
+        } 
+    }
+    
+    /**
+     * 获取植物是否可点击
+     * @param positionIndex 植物位置索引
+     * @returns 是否可点击
+     */
+    public isPlantClickable(positionIndex: number): boolean {
+        const plantData = this.plants.find(p => p.positionIndex === positionIndex)
+        return plantData ? plantData.isClickable : false
     }
 }   
