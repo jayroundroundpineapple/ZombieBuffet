@@ -310,10 +310,8 @@ export default class plantItem extends cc.Component {
                 }
                 return
             }
-            
             // 播放appear动画
             spineComponent.setAnimation(0, 'appear', false)
-            
             // 设置动画完成监听
             if(callback) {
                 spineComponent.setCompleteListener((entry) => {

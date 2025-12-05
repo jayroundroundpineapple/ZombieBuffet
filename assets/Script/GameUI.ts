@@ -5,6 +5,8 @@ import { GameConf, plantType } from "./GameConf";
 import mosterItem from "./mosterItem";
 import plantItem from "./plantItem";
 import bulletItem from "./bulletItem";
+import Utils from "./utils/Utils";
+import NotifyEffect from "./utils/NotifyEffect";
 
 /**怪物数据接口 */
 interface MonsterData {
@@ -50,6 +52,8 @@ export default class GameUI extends cc.Component {
     private resultNode: cc.Node = null
     @property(cc.Button)
     private moveButton: cc.Button = null //移动按钮
+    @property(cc.Node)
+    private mergeNode:cc.Node = null
 
     clickTime: number = 0
     private bgmAudioFlag: boolean = true
@@ -78,19 +82,34 @@ export default class GameUI extends cc.Component {
             this.bgmAudioFlag = false
         })
         this.resize()
+        this.mergeNode.scale = 0
+        this.finger.active = this.mergeNode.active = this.resultNode.active = this.maskNode.active = false
         this.initGame()
         // 绑定移动按钮
         if (this.moveButton) {
             this.moveButton.node.on('click', this.onMoveButtonClick, this)
         }
     }
-    setFingerTip(startPos:cc.Vec3,endPos:cc.Vec3) {
+    setFingerTip(startPos: cc.Vec3, endPos: cc.Vec3) {
+        this.mergeNode.scale = 0
+        this.mergeNode.active = true
+        cc.tween(this.mergeNode)
+        .delay(0.2)
+        .to(0.4, { scale: 1 })
+        .delay(1)
+        .call(() => {
+            this.mergeNode.scale = 0
+            this.mergeNode.active = false
+        })
+        .start()
         this.finger.position = startPos
-        this.finger.active = true
-        this.finger.opacity = 255
+        this.scheduleOnce(() => {
+            this.finger.active = true
+            this.finger.opacity = 255
+        }, 0.2)
         cc.tween(this.finger).repeatForever(
             cc.tween(this.finger)
-                .delay(0.1)
+                .delay(0.2)
                 .to(0.6, { position: endPos })
                 .to(0.2, { opacity: 0 })
                 .delay(0.1)
@@ -103,14 +122,11 @@ export default class GameUI extends cc.Component {
     }
     private initGame() {
         this.setFingerTip(cc.v3(245, -155), cc.v3(25, -155))
-        // 初始化底部植物盒子中的植物
         this.initBottomPlantBox()
-        //创建地图上一开始有的植物
         // targetMapPlantIndex: 指定要合成的地图植物位置索引，-1表示无指定目标
-        this.createPlant(plantType.cao, 2, 0, -1, false) 
-        this.createPlant(plantType.cao, 2, 1, 0, true) 
-        this.createPlant(plantType.dangong, 1, 2, -1, false) 
-        // 清空之前的怪物
+        this.createPlant(plantType.cao, 2, 0, -1, false)
+        this.createPlant(plantType.cao, 2, 1, 0, true)
+        this.createPlant(plantType.dangong, 1, 2, -1, false)
         this.monsters.forEach(monster => {
             if (monster.node && monster.node.isValid) {
                 monster.node.destroy()
@@ -336,6 +352,9 @@ export default class GameUI extends cc.Component {
             if (isDead) {
                 frontMonster.mosterItem.playDeadAnimation(() => {
                     this.removeMonster(frontMonster.node)
+                    if (this.monsters.length === 0) {
+                        this.showResultUI()
+                    }
                 })
                 // 继续循环，攻击下一个最前面的怪物
             } else {
@@ -344,7 +363,11 @@ export default class GameUI extends cc.Component {
             }
         }
     }
+    showResultUI() {
+        NotifyEffect.NormalShowUI(this.resultNode, RESSpriteFrame.instance.comeOutAudioClip, 0, true, () => {
 
+        })
+    }
     /**
      * 创建子弹
      */
@@ -520,33 +543,34 @@ export default class GameUI extends cc.Component {
                     this.dragStartPlant = null
                     startPos = null
                     event.stopPropagation()
-                    
+
                     // 如果是底部植物点击合成，更新引导流程
-                    if(plantData.boxIndex !== undefined && plantData.boxIndex >= 0) {
+                    if (plantData.boxIndex !== undefined && plantData.boxIndex >= 0) {
                         this.clickTime++
                         // 根据点击次数设置下一个植物可点击
-                        if(this.clickTime === 2){
-                            // 第一个底部植物点击完成，设置第二个可点击
-                            const secondBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 1)
-                            if(secondBoxPlant) {
-                                this.setPlantClickable(secondBoxPlant, true)
-                                let startPos = secondBoxPlant.node.parent.convertToWorldSpaceAR(secondBoxPlant.node.position)  
-                                startPos = this.finger.parent.convertToNodeSpaceAR(startPos) 
-                                this.setFingerTip(cc.v3(startPos.x + 50,startPos.y), cc.v3(25, -225))
+                        this.scheduleOnce(() => {
+                            if (this.clickTime === 2) {
+                                // 第一个底部植物点击完成，设置第二个可点击
+                                const secondBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 1)
+                                if (secondBoxPlant) {
+                                    this.setPlantClickable(secondBoxPlant, true)
+                                    let startPos = secondBoxPlant.node.parent.convertToWorldSpaceAR(secondBoxPlant.node.position)
+                                    startPos = this.finger.parent.convertToNodeSpaceAR(startPos)
+                                    this.setFingerTip(cc.v3(startPos.x + 50, startPos.y), cc.v3(25, -225))
+                                }
                             }
-                        }
-                        if(this.clickTime === 3){
-                            // 第一个底部植物点击完成，设置第二个可点击
-                            const lastBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 2)
-                            if(lastBoxPlant) {
-                                this.setPlantClickable(lastBoxPlant, true)
-                                let startPos = lastBoxPlant.node.parent.convertToWorldSpaceAR(lastBoxPlant.node.position)  
-                                startPos = this.finger.parent.convertToNodeSpaceAR(startPos) 
-                                this.setFingerTip(cc.v3(startPos.x + 50,startPos.y), cc.v3(25, -155))
+                            if (this.clickTime === 3) {
+                                // 第一个底部植物点击完成，设置第二个可点击
+                                const lastBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 2)
+                                if (lastBoxPlant) {
+                                    this.setPlantClickable(lastBoxPlant, true)
+                                    let startPos = lastBoxPlant.node.parent.convertToWorldSpaceAR(lastBoxPlant.node.position)
+                                    startPos = this.finger.parent.convertToNodeSpaceAR(startPos)
+                                    this.setFingerTip(cc.v3(startPos.x + 50, startPos.y), cc.v3(25, -155))
+                                }
                             }
-                        } 
+                        }, 0.9)
                     }
-                    
                     return
                 }
             }
@@ -663,31 +687,19 @@ export default class GameUI extends cc.Component {
                     this.finger.stopAllActions()
                     this.finger.active = false
                     this.clickTime++
-                    
-                    // 根据点击次数设置下一个植物可点击
-                    if(this.clickTime === 1){
-                        
-                        // 第一次合成完成，设置底部盒子第一个植物可点击（boxIndex === 0）
-                        const firstBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 0)
-                        if(firstBoxPlant) {
-                            this.setPlantClickable(firstBoxPlant, true)
-                            let startPos = firstBoxPlant.node.parent.convertToWorldSpaceAR(firstBoxPlant.node.position)  
-                            startPos = this.finger.parent.convertToNodeSpaceAR(startPos) 
-                            this.setFingerTip(cc.v3(startPos.x + 50,startPos.y), cc.v3(25, -255))
+                    this.scheduleOnce(() => {
+                        if (this.clickTime === 1) {
+                            // 第一次合成完成，设置底部盒子第一个植物可点击（boxIndex === 0）
+                            const firstBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 0)
+                            if (firstBoxPlant) {
+                                this.setPlantClickable(firstBoxPlant, true)
+                                let startPos = firstBoxPlant.node.parent.convertToWorldSpaceAR(firstBoxPlant.node.position)
+                                startPos = this.finger.parent.convertToNodeSpaceAR(startPos)
+                                this.setFingerTip(cc.v3(startPos.x + 50, startPos.y), cc.v3(25, -255))
+                            }
                         }
-                    } 
-                    // else if(this.clickTime === 2){
-                    //     const secondBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 1)
-                    //     if(secondBoxPlant) {
-                    //         this.setPlantClickable(secondBoxPlant, true)
-                    //     }
-                    // } else if(this.clickTime === 3){
-                    //     const thirdBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 2)
-                    //     if(thirdBoxPlant) {
-                    //         this.setPlantClickable(thirdBoxPlant, true)
-                    //     }
-                    // }
-                    console.log('clickTime', this.clickTime)
+                        console.log('clickTime', this.clickTime)
+                    }, 0.9)
                     return
                 }
 
@@ -830,14 +842,14 @@ export default class GameUI extends cc.Component {
         const oldLevel = finalKeepPlant.plantItem.getLevel()
         const removeLevel = removePlant.plantItem.getLevel()
         const newLevel = oldLevel + removeLevel
-        
+
         // 销毁被移除的植物
         const index = this.plants.indexOf(removePlant)
         if (index > -1) {
             this.plants.splice(index, 1)
         }
         removePlant.node.destroy()
-        
+
         // 更新保留植物的等级（会自动更新spine皮肤）
         finalKeepPlant.plantItem.setLevel(newLevel)
 
@@ -845,14 +857,11 @@ export default class GameUI extends cc.Component {
         finalKeepPlant.node.setPosition(targetPosition)
         finalKeepPlant.positionIndex = targetPositionIndex
         finalKeepPlant.plantItem.setPositionIndex(targetPositionIndex)
-        
-        // 播放appear动画（合成新等级植物时）
-        finalKeepPlant.plantItem.playAppearAnimation(() => {
-            // 动画播放完成后的回调
-            console.log(`植物合成成功：${oldLevel}级 + ${removeLevel}级 = ${newLevel}级，新攻击力：${newLevel}，位置保持在目标植物位置`)
-            // 可以在这里添加其他逻辑，比如音效等
-        })
-        
+
+        // // 播放appear动画（合成新等级植物时）
+        // finalKeepPlant.plantItem.playAppearAnimation(() => {
+        // })
+
         this.onMoveButtonClick()
     }
 
@@ -953,7 +962,6 @@ export default class GameUI extends cc.Component {
             console.warn('未找到对应的植物数据')
         }
     }
-
     /**
      * 更新植物的可点击状态（更新节点的交互性）
      */
@@ -963,9 +971,7 @@ export default class GameUI extends cc.Component {
         // 设置节点的交互性
         // 可以通过设置节点的opacity或者添加一个遮罩层来实现视觉反馈
         if (plantData.isClickable) {
-            // 可点击：恢复正常透明度
             plantData.node.opacity = 255
-            // 移除遮罩效果（如果有）
             const maskComponent = plantData.node.getComponent(cc.Mask)
             if (maskComponent) {
                 maskComponent.enabled = false
