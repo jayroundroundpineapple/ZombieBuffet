@@ -84,31 +84,32 @@ export default class GameUI extends cc.Component {
             this.moveButton.node.on('click', this.onMoveButtonClick, this)
         }
     }
-    setFirstFingerTip() {
-        this.finger.position = cc.v3(245, -155)
+    setFingerTip(startPos:cc.Vec3,endPos:cc.Vec3) {
+        this.finger.position = startPos
+        this.finger.active = true
+        this.finger.opacity = 255
         cc.tween(this.finger).repeatForever(
             cc.tween(this.finger)
                 .delay(0.1)
-                .to(0.6, { x: 25 })
+                .to(0.6, { position: endPos })
                 .to(0.2, { opacity: 0 })
                 .delay(0.1)
                 .call(() => {
-                    this.finger.x = 245
+                    this.finger.position = startPos
                     this.finger.opacity = 255
                 })
                 .start()
         ).start()
     }
     private initGame() {
-        this.setFirstFingerTip()
+        this.setFingerTip(cc.v3(245, -155), cc.v3(25, -155))
         // 初始化底部植物盒子中的植物
         this.initBottomPlantBox()
         //创建地图上一开始有的植物
         // targetMapPlantIndex: 指定要合成的地图植物位置索引，-1表示无指定目标
-        // isClickable: 是否可点击（用于引导系统）
-        this.createPlant(plantType.cao, 2, 0, -1, false) // 第一个植物不可点击
-        this.createPlant(plantType.cao, 2, 1, 0, true) // 第二个植物不可点击
-        this.createPlant(plantType.dangong, 1, 2, -1, false) // 第三个植物不可点击
+        this.createPlant(plantType.cao, 2, 0, -1, false) 
+        this.createPlant(plantType.cao, 2, 1, 0, true) 
+        this.createPlant(plantType.dangong, 1, 2, -1, false) 
         // 清空之前的怪物
         this.monsters.forEach(monster => {
             if (monster.node && monster.node.isValid) {
@@ -117,17 +118,14 @@ export default class GameUI extends cc.Component {
         })
         this.monsters = []
 
-        // 创建三个怪物，血条分别为11/8/12
         const hpList = [12, 8, 11]
         const typeList = [3, 3, 1]
-        // 初始位置索引：最后一只在索引0(-268)，第二只在索引1(-160)，第一只在索引2(-50)
         const initialPosIndexes = [0, 1, 2]
 
         for (let i = 0; i < 3; i++) {
             const monsterNode = cc.instantiate(this.mosterPre)
             monsterNode.parent = this.mapNode
 
-            // 获取mosterItem组件（应该在预制体上已经挂载）
             const monsterItemComponent = monsterNode.getComponent(mosterItem)
             monsterItemComponent.setType(typeList[i])
             if (!monsterItemComponent) {
@@ -135,21 +133,16 @@ export default class GameUI extends cc.Component {
                 continue
             }
 
-            // 设置血条数量（hpLabel在编辑器中已设置好位置和字体大小）
             const posIndex = initialPosIndexes[i]
             monsterItemComponent.setHp(hpList[i])
             monsterItemComponent.setPositionIndex(posIndex)
-
-            // 设置初始位置
             monsterNode.setPosition(GameConf.mosterMapPosArr[posIndex])
 
-            // 创建怪物数据
             const monsterData: MonsterData = {
                 node: monsterNode,
                 mosterItem: monsterItemComponent,
                 positionIndex: posIndex
             }
-
             this.monsters.push(monsterData)
         }
 
@@ -163,10 +156,8 @@ export default class GameUI extends cc.Component {
             console.error('底部植物盒子未设置')
             return
         }
-
         // 创建3只植物：level=1的dangong, level=2的dangong, level=4的cao
         // targetMapPlantIndex: 指定要合成的地图植物位置索引，-1表示无指定目标
-        // isClickable: 是否可点击（用于引导系统）
         let plantConfigs = [
             { type: plantType.dangong, level: 1, x: -218, y: 30, targetMapPlantIndex: 2, isClickable: false, boxIndex: 0 }, // 第一个（索引0）
             { type: plantType.dangong, level: 2, x: -88, y: 30, targetMapPlantIndex: 2, isClickable: false, boxIndex: 1 }, // 第二个（索引1）
@@ -492,12 +483,12 @@ export default class GameUI extends cc.Component {
         let startPos: cc.Vec3 = null
 
         plantData.node.on(cc.Node.EventType.TOUCH_START, (event: cc.Event.EventTouch) => {
-            // 检查是否可点击
             if (!plantData.isClickable) {
                 event.stopPropagation()
                 return
             }
-
+            this.finger.stopAllActions()
+            this.finger.active = false
             this.dragStartPlant = plantData
             startPos = plantData.node.position.clone()
             event.stopPropagation()
@@ -539,17 +530,21 @@ export default class GameUI extends cc.Component {
                             const secondBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 1)
                             if(secondBoxPlant) {
                                 this.setPlantClickable(secondBoxPlant, true)
-                                console.log('已启用底部盒子第二个植物')
-                            }
-                        } else if(this.clickTime === 3){
-                            // 第二个底部植物点击完成，设置第三个可点击
-                            const thirdBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 2)
-                            if(thirdBoxPlant) {
-                                this.setPlantClickable(thirdBoxPlant, true)
-                                console.log('已启用底部盒子第三个植物')
+                                let startPos = secondBoxPlant.node.parent.convertToWorldSpaceAR(secondBoxPlant.node.position)  
+                                startPos = this.finger.parent.convertToNodeSpaceAR(startPos) 
+                                this.setFingerTip(cc.v3(startPos.x + 50,startPos.y), cc.v3(25, -225))
                             }
                         }
-                        console.log('底部植物点击完成，clickTime:', this.clickTime)
+                        if(this.clickTime === 3){
+                            // 第一个底部植物点击完成，设置第二个可点击
+                            const lastBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 2)
+                            if(lastBoxPlant) {
+                                this.setPlantClickable(lastBoxPlant, true)
+                                let startPos = lastBoxPlant.node.parent.convertToWorldSpaceAR(lastBoxPlant.node.position)  
+                                startPos = this.finger.parent.convertToNodeSpaceAR(startPos) 
+                                this.setFingerTip(cc.v3(startPos.x + 50,startPos.y), cc.v3(25, -155))
+                            }
+                        } 
                     }
                     
                     return
@@ -671,28 +666,27 @@ export default class GameUI extends cc.Component {
                     
                     // 根据点击次数设置下一个植物可点击
                     if(this.clickTime === 1){
+                        
                         // 第一次合成完成，设置底部盒子第一个植物可点击（boxIndex === 0）
                         const firstBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 0)
                         if(firstBoxPlant) {
                             this.setPlantClickable(firstBoxPlant, true)
-                            console.log('已启用底部盒子第一个植物')
+                            let startPos = firstBoxPlant.node.parent.convertToWorldSpaceAR(firstBoxPlant.node.position)  
+                            startPos = this.finger.parent.convertToNodeSpaceAR(startPos) 
+                            this.setFingerTip(cc.v3(startPos.x + 50,startPos.y), cc.v3(25, -255))
                         }
-                    } else if(this.clickTime === 2){
-                        // 第二个植物点击完成，设置底部盒子第二个植物可点击（boxIndex === 1）
-                        const secondBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 1)
-                        if(secondBoxPlant) {
-                            this.setPlantClickable(secondBoxPlant, true)
-                            console.log('已启用底部盒子第二个植物')
-                        }
-                    } else if(this.clickTime === 3){
-                        // 第三个植物点击完成，设置底部盒子第三个植物可点击（boxIndex === 2）
-                        const thirdBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 2)
-                        if(thirdBoxPlant) {
-                            this.setPlantClickable(thirdBoxPlant, true)
-                            console.log('已启用底部盒子第三个植物')
-                        }
-                    }
-                    
+                    } 
+                    // else if(this.clickTime === 2){
+                    //     const secondBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 1)
+                    //     if(secondBoxPlant) {
+                    //         this.setPlantClickable(secondBoxPlant, true)
+                    //     }
+                    // } else if(this.clickTime === 3){
+                    //     const thirdBoxPlant = this.plants.find(p => p.boxIndex !== undefined && p.boxIndex === 2)
+                    //     if(thirdBoxPlant) {
+                    //         this.setPlantClickable(thirdBoxPlant, true)
+                    //     }
+                    // }
                     console.log('clickTime', this.clickTime)
                     return
                 }
