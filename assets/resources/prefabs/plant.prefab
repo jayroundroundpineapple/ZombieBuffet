@@ -111,8 +111,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 69.66,
-      "height": 99.4
+      "width": 148.71,
+      "height": 151.5
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -226,12 +226,12 @@
         "__uuid__": "a153945d-2511-4c14-be7b-05d242f47d57"
       }
     ],
-    "_lineWidth": 1,
+    "_lineWidth": 2,
     "_strokeColor": {
       "__type__": "cc.Color",
-      "r": 255,
+      "r": 0,
       "g": 0,
-      "b": 0,
+      "b": 255,
       "a": 255
     },
     "_lineJoin": 2,
@@ -254,7 +254,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "b2RKu2fqZDPKKXWNfMU3gI",
+    "fileId": "06Mm1+RjhNEatiChwGeZhA",
     "sync": false
   },
   {

@@ -830,22 +830,31 @@ export default class GameUI extends cc.Component {
         const oldLevel = finalKeepPlant.plantItem.getLevel()
         const removeLevel = removePlant.plantItem.getLevel()
         const newLevel = oldLevel + removeLevel
-        finalKeepPlant.plantItem.setLevel(newLevel)
-
-        // 确保保留植物在目标位置（防止位置偏移）
-        finalKeepPlant.node.setPosition(targetPosition)
-        finalKeepPlant.positionIndex = targetPositionIndex
-        finalKeepPlant.plantItem.setPositionIndex(targetPositionIndex)
+        
         // 销毁被移除的植物
         const index = this.plants.indexOf(removePlant)
         if (index > -1) {
             this.plants.splice(index, 1)
         }
         removePlant.node.destroy()
-        this.onMoveButtonClick()
-        console.log(`植物合成成功：${oldLevel}级 + ${removeLevel}级 = ${newLevel}级，新攻击力：${newLevel}，位置保持在目标植物位置`)
-    }
+        
+        // 更新保留植物的等级（会自动更新spine皮肤）
+        finalKeepPlant.plantItem.setLevel(newLevel)
 
+        // 确保保留植物在目标位置（防止位置偏移）
+        finalKeepPlant.node.setPosition(targetPosition)
+        finalKeepPlant.positionIndex = targetPositionIndex
+        finalKeepPlant.plantItem.setPositionIndex(targetPositionIndex)
+        
+        // 播放appear动画（合成新等级植物时）
+        finalKeepPlant.plantItem.playAppearAnimation(() => {
+            // 动画播放完成后的回调
+            console.log(`植物合成成功：${oldLevel}级 + ${removeLevel}级 = ${newLevel}级，新攻击力：${newLevel}，位置保持在目标植物位置`)
+            // 可以在这里添加其他逻辑，比如音效等
+        })
+        
+        this.onMoveButtonClick()
+    }
 
     /**
      * 移除怪物

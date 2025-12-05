@@ -288,6 +288,61 @@ export default class plantItem extends cc.Component {
     }
     
     /**
+     * 播放出现动画（appear）
+     */
+    public playAppearAnimation(callback?: () => void) {
+        try {
+            // 优先使用spineNode
+            let spineComponent: sp.Skeleton = null
+            if(this.spineNode) {
+                spineComponent = this.spineNode.getComponent(sp.Skeleton)
+            }
+            
+            // 如果spineNode没有，尝试从子节点查找
+            if(!spineComponent) {
+                spineComponent = this.node.getComponentInChildren(sp.Skeleton)
+            }
+            
+            if(!spineComponent || !spineComponent.skeletonData) {
+                console.log('无法播放appear动画：spineComponent或skeletonData为空')
+                if(callback) {
+                    callback()
+                }
+                return
+            }
+            
+            // 播放appear动画
+            spineComponent.setAnimation(0, 'appear', false)
+            
+            // 设置动画完成监听
+            if(callback) {
+                spineComponent.setCompleteListener((entry) => {
+                    if(entry && entry.animation && entry.animation.name === 'appear') {
+                        callback()
+                        // 移除监听，避免重复调用
+                        spineComponent.setCompleteListener(null)
+                        // 播放完appear动画后，播放idle动画
+                        this.playIdleAnimation()
+                    }
+                })
+            } else {
+                // 如果没有回调，播放完appear后自动播放idle
+                spineComponent.setCompleteListener((entry) => {
+                    if(entry && entry.animation && entry.animation.name === 'appear') {
+                        spineComponent.setCompleteListener(null)
+                        this.playIdleAnimation()
+                    }
+                })
+            }
+        } catch(e) {
+            console.log('播放appear动画失败', e);
+            if(callback) {
+                callback()
+            }
+        }
+    }
+    
+    /**
      * 获取植物类型
      */
     public getPlantType(): number {
